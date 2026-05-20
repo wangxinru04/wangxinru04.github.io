@@ -3,219 +3,491 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wang Xinru Portfolio</title>
+  <title>Wang Xinru — Portfolio</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      background: linear-gradient(135deg, #07111f, #111827);
-      color: #f8f3e8;
-      line-height: 1.6;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f4ed;
+      color: #171717;
+      line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1180px, 92vw);
+      margin: 0 auto;
     }
 
     header {
-      padding: 80px 10%;
-      text-align: center;
-      background: linear-gradient(135deg, #111827, #1f2937);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0;
+      border-bottom: 1px solid #171717;
+      position: sticky;
+      top: 0;
+      background: rgba(247, 244, 237, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 10;
     }
 
-    header h1 {
-      font-size: 3rem;
-      color: #ffffff;
-      margin-bottom: 15px;
-    }
-
-    header h2 {
-      color: #d4af37;
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-    }
-
-    header p {
-      max-width: 700px;
-      margin: auto;
-      color: #d1d5db;
-      font-size: 1.1rem;
+    .logo {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
     }
 
     nav {
-      background: #0b1628;
-      padding: 15px;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      display: flex;
+      gap: 28px;
+      font-size: 0.95rem;
+      text-transform: lowercase;
     }
 
     nav a {
-      color: #f8f3e8;
-      text-decoration: none;
-      margin: 0 18px;
-      font-weight: bold;
+      border-bottom: 1px solid transparent;
     }
 
     nav a:hover {
-      color: #d4af37;
+      border-bottom-color: #171717;
+    }
+
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      grid-template-columns: 0.9fr 2.1fr;
+      gap: 60px;
+      align-items: center;
+      border-bottom: 1px solid #171717;
+    }
+
+    .eyebrow {
+      font-size: 0.9rem;
+      text-transform: lowercase;
+      color: #5f5b52;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(4.2rem, 12vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+      font-weight: 800;
+    }
+
+    .hero-info {
+      align-self: end;
+      padding-bottom: 74px;
+      max-width: 560px;
+      color: #3f3b34;
+      font-size: 1.05rem;
+    }
+
+    .hero-info p + p {
+      margin-top: 18px;
     }
 
     section {
-      padding: 70px 10%;
+      padding: 96px 0;
+      border-bottom: 1px solid #171717;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 2.1fr;
+      gap: 60px;
+    }
+
+    .section-label {
+      font-size: 0.95rem;
+      text-transform: lowercase;
+      color: #5f5b52;
     }
 
     .section-title {
-      font-size: 2rem;
-      color: #d4af37;
-      margin-bottom: 25px;
-      border-left: 5px solid #d4af37;
-      padding-left: 15px;
+      font-size: clamp(2.4rem, 5vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      font-weight: 800;
+      max-width: 760px;
+      margin-bottom: 38px;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    .about-text {
+      max-width: 760px;
+      font-size: 1.18rem;
+      color: #292724;
     }
 
-    .card h3 {
-      color: #ffffff;
-      margin-bottom: 10px;
+    .about-text p + p {
+      margin-top: 22px;
     }
 
-    .card p {
-      color: #d1d5db;
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid #171717;
     }
 
-    .skills {
+    .work-item {
+      display: grid;
+      grid-template-columns: 110px 1fr 210px;
+      gap: 34px;
+      padding: 34px 0;
+      border-bottom: 1px solid #171717;
+    }
+
+    .work-number {
+      color: #5f5b52;
+      font-size: 0.95rem;
+    }
+
+    .work-item h3 {
+      font-size: clamp(1.6rem, 3vw, 2.8rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .work-item p {
+      max-width: 700px;
+      color: #3f3b34;
+      font-size: 1rem;
+    }
+
+    .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 8px;
+      margin-top: 18px;
     }
 
-    .skill {
-      background: #d4af37;
-      color: #07111f;
-      padding: 10px 18px;
+    .tag {
+      border: 1px solid #171717;
       border-radius: 999px;
-      font-weight: bold;
+      padding: 5px 11px;
+      font-size: 0.82rem;
+      color: #171717;
+      background: transparent;
     }
 
-    .button {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 12px 22px;
-      background: #d4af37;
-      color: #07111f;
-      text-decoration: none;
+    .work-link {
+      justify-self: end;
+      align-self: start;
+      border: 1px solid #171717;
       border-radius: 999px;
-      font-weight: bold;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
     }
 
-    .button:hover {
-      background: #facc15;
+    .work-link:hover {
+      background: #171717;
+      color: #f7f4ed;
+    }
+
+    .toolkit {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .toolkit-column {
+      border-top: 1px solid #171717;
+      padding-top: 22px;
+    }
+
+    .toolkit-column h3 {
+      font-size: 1.15rem;
+      margin-bottom: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .toolkit-column ul {
+      list-style: none;
+    }
+
+    .toolkit-column li {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(23, 23, 23, 0.18);
+      color: #3f3b34;
+    }
+
+    .level {
+      color: #7a756b;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .contact-title {
+      font-size: clamp(3rem, 8vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+      font-weight: 800;
+      margin-bottom: 36px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .contact-links a,
+    .contact-links span {
+      border: 1px solid #171717;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+    }
+
+    .contact-links a:hover {
+      background: #171717;
+      color: #f7f4ed;
     }
 
     footer {
-      text-align: center;
-      padding: 30px;
-      background: #06101f;
-      color: #9ca3af;
-      border-top: 1px solid rgba(212, 175, 55, 0.3);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 28px 0 42px;
+      font-size: 0.9rem;
+      color: #5f5b52;
     }
 
-    @media (max-width: 700px) {
-      header h1 {
-        font-size: 2.2rem;
+    @media (max-width: 820px) {
+      header {
+        align-items: flex-start;
+        gap: 20px;
       }
 
-      nav a {
-        display: inline-block;
-        margin: 8px;
+      nav {
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .hero,
+      .section-grid {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 90px 0 70px;
+      }
+
+      .hero-info {
+        align-self: auto;
+        padding-bottom: 0;
+      }
+
+      section {
+        padding: 68px 0;
+      }
+
+      .work-item {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .work-link {
+        justify-self: start;
+      }
+
+      .toolkit {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 
 <body>
+  <div class="page">
+    <header>
+      <a class="logo" href="#top">wang.xinru</a>
+      <nav>
+        <a href="#about">about</a>
+        <a href="#work">work</a>
+        <a href="#skills">skills</a>
+        <a href="#contact">contact</a>
+      </nav>
+    </header>
 
-  <header>
-    <h1>Wang Xinru</h1>
-    <h2>Film, Data & Creative Technology Portfolio</h2>
-    <p>
-      I am interested in film, visual media, and data analysis. 
-      This portfolio presents my creative and data-related projects, including my final project 
-      CineStats — Film Festival Analytics.
-    </p>
-  </header>
+    <main id="top">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">portfolio / 2026</p>
+          <h1>Wang Xinru,<br>working between film and data.</h1>
+        </div>
 
-  <nav>
-    <a href="#about">About Me</a>
-    <a href="#projects">Projects</a>
-    <a href="#skills">Skills</a>
-    <a href="#contact">Contact</a>
-  </nav>
+        <div class="hero-info">
+          <p>
+            Arts and Big Data student at Sungkyunkwan University, interested in film, visual media, creative technology, and data storytelling.
+          </p>
+          <p>
+            Based in Seoul · film / data visualization / interactive media
+          </p>
+        </div>
+      </section>
 
-  <section id="about">
-    <h2 class="section-title">About Me</h2>
-    <div class="card">
-      <p>
-        Hello, my name is Wang Xinru. I am studying Arts and Big Data at Sungkyunkwan University.
-        I am interested in combining visual media, film, design, and data analysis. 
-        I enjoy creating projects that present information in a clear, visual, and interactive way.
-      </p>
-    </div>
-  </section>
+      <section id="about">
+        <div class="section-grid">
+          <p class="section-label">about</p>
+          <div>
+            <h2 class="section-title">A film student building visual stories with data.</h2>
+            <div class="about-text">
+              <p>
+                I am interested in combining visual media, film, design, and data analysis. My projects often explore how information can be organized, visualized, and presented in a clear and interactive way.
+              </p>
+              <p>
+                Through my work, I want to connect creative production with digital tools, especially in projects where film culture, audience behavior, and visual design meet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <section id="projects">
-    <h2 class="section-title">Projects</h2>
+      <section id="work">
+        <div class="section-grid">
+          <p class="section-label">selected work</p>
+          <div>
+            <h2 class="section-title">Projects I designed, built, and refined.</h2>
 
-    <div class="card">
-      <h3>🎬 CineStats — Film Festival Analytics</h3>
-      <p>
-        CineStats is a Streamlit movie data dashboard using real-time TMDb data. 
-        It explores popular movies, top-rated films, directors, ratings, genres, popularity, 
-        and movie trends through interactive charts, tables, filters, search functions, and CSV export.
-      </p>
-      <a class="button" href="https://wangxinrufinalcinestats-ecna9pefzg6hadmy4ghttb.streamlit.app/" target="_blank">View Project</a>
-    </div>
+            <div class="work-list">
+              <article class="work-item">
+                <div class="work-number">01 / 03</div>
+                <div>
+                  <h3>CineStats — Film Festival Analytics</h3>
+                  <p>
+                    A Streamlit movie data dashboard using real-time TMDb data. It explores popular movies, top-rated films, directors, ratings, genres, popularity, and movie trends through interactive charts, filters, tables, search functions, and CSV export.
+                  </p>
+                  <div class="tags">
+                    <span class="tag">Streamlit</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">TMDb API</span>
+                    <span class="tag">Data Visualization</span>
+                  </div>
+                </div>
+                <a class="work-link" href="https://wangxinrufinalcinestats-ecna9pefzg6hadmy4ghttb.streamlit.app/" target="_blank">view project</a>
+              </article>
 
-  
-  </section>
+              <article class="work-item">
+                <div class="work-number">02 / 03</div>
+                <div>
+                  <h3>When You Come Around Me</h3>
+                  <p>
+                    A short film project exploring healing, self-exile, and emotional return through a quiet visual style. The project focuses on atmosphere, restrained cinematography, and the metaphor of wind.
+                  </p>
+                  <div class="tags">
+                    <span class="tag">Short Film</span>
+                    <span class="tag">Directing</span>
+                    <span class="tag">Cinematography</span>
+                    <span class="tag">Visual Storytelling</span>
+                  </div>
+                </div>
+                <span class="work-link">coming soon</span>
+              </article>
 
-  <section id="skills">
-    <h2 class="section-title">Skills</h2>
-    <div class="skills">
-      <div class="skill">Python</div>
-      <div class="skill">Streamlit</div>
-      <div class="skill">PFilm Production</div>
-      <div class="skill">Video Editing</div>
-      <div class="skill">Directing</div>
-      <div class="skill">Visual Design</div>
-      <div class="skill">Data Visualization</div>
-      <div class="skill">Interactive Media</div>
-      <div class="skill">Dashboard Design</div>
-    </div>
-  </section>
+              <article class="work-item">
+                <div class="work-number">03 / 03</div>
+                <div>
+                  <h3>Creative Technology Portfolio</h3>
+                  <p>
+                    A personal portfolio space for presenting film-related, design-related, and data-related projects in a minimal visual format.
+                  </p>
+                  <div class="tags">
+                    <span class="tag">HTML</span>
+                    <span class="tag">CSS</span>
+                    <span class="tag">Portfolio Design</span>
+                  </div>
+                </div>
+                <span class="work-link">in progress</span>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <section id="contact">
-    <h2 class="section-title">Contact</h2>
-    <div class="card">
-      <p>Email: wxr2320704536@gmail.com</p>
-      <p>GitHub: 2320704536</p>
-    </div>
-  </section>
+      <section id="skills">
+        <div class="section-grid">
+          <p class="section-label">toolkit</p>
+          <div>
+            <h2 class="section-title">Tools and skills I use often.</h2>
 
-  <footer>
-    <p>© 2026 Wang Xinru | Arts and Big Data Portfolio</p>
-  </footer>
+            <div class="toolkit">
+              <div class="toolkit-column">
+                <h3>Data & Code</h3>
+                <ul>
+                  <li><span>Python</span><span class="level">often</span></li>
+                  <li><span>Streamlit</span><span class="level">often</span></li>
+                  <li><span>Data Visualization</span><span class="level">often</span></li>
+                  <li><span>Dashboard Design</span><span class="level">often</span></li>
+                </ul>
+              </div>
 
+              <div class="toolkit-column">
+                <h3>Film & Media</h3>
+                <ul>
+                  <li><span>Film Production</span><span class="level">often</span></li>
+                  <li><span>Directing</span><span class="level">often</span></li>
+                  <li><span>Video Editing</span><span class="level">often</span></li>
+                  <li><span>Visual Storytelling</span><span class="level">focus</span></li>
+                </ul>
+              </div>
+
+              <div class="toolkit-column">
+                <h3>Design</h3>
+                <ul>
+                  <li><span>Visual Design</span><span class="level">often</span></li>
+                  <li><span>Interactive Media</span><span class="level">learning</span></li>
+                  <li><span>Presentation Design</span><span class="level">often</span></li>
+                  <li><span>Creative Research</span><span class="level">focus</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <p class="section-label">say hello</p>
+        <h2 class="contact-title">Let's make something worth watching.</h2>
+        <div class="contact-links">
+          <a href="mailto:wxr2320704536@gmail.com">wxr2320704536@gmail.com</a>
+          <a href="https://github.com/2320704536" target="_blank">GitHub</a>
+          <span>Seoul, South Korea</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Wang Xinru</p>
+      <p>Built in Seoul · Film, data & creative technology</p>
+    </footer>
+  </div>
 </body>
 </html>
