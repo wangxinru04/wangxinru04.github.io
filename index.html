@@ -1,493 +1,944 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wang Xinru — Portfolio</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wang Xinru — Film & Data</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --black:   #05070a;
+      --black2:  #0a0d13;
+      --black3:  #0f1219;
+      --amber:   #e8a020;
+      --amber2:  #f5c458;
+      --amber3:  rgba(232,160,32,0.1);
+      --red:     #8b1a1a;
+      --red2:    #c0392b;
+      --cream:   #f0e8d8;
+      --cream2:  rgba(240,232,216,0.62);
+      --cream3:  rgba(240,232,216,0.28);
+      --border:  rgba(232,160,32,0.15);
+      --border2: rgba(232,160,32,0.32);
+      --scan:    rgba(0,0,0,0.35);
     }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f7f4ed;
-      color: #171717;
-      line-height: 1.55;
-      letter-spacing: -0.01em;
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: 400;
+      overflow-x: hidden;
+      cursor: none;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    /* ── CUSTOM CURSOR: crosshair ── */
+    #cur {
+      position: fixed; z-index: 9999; pointer-events: none;
+      width: 32px; height: 32px;
+      transform: translate(-50%, -50%);
+    }
+    #cur::before, #cur::after {
+      content: ''; position: absolute; background: var(--amber);
+    }
+    #cur::before { width:1px; height:100%; left:50%; top:0; }
+    #cur::after  { width:100%; height:1px; top:50%; left:0; }
+    .cur-dot {
+      position:fixed; z-index:9999; pointer-events:none;
+      width:4px; height:4px; border-radius:50%;
+      background:var(--amber2);
+      transform:translate(-50%,-50%);
     }
 
-    .page {
-      width: min(1180px, 92vw);
-      margin: 0 auto;
+    /* ── SCANLINES overlay ── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:8000; pointer-events:none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.08) 3px,
+        rgba(0,0,0,0.08) 4px
+      );
+    }
+    /* grain */
+    body::after {
+      content:''; position:fixed; inset:0; z-index:8001; pointer-events:none;
+      opacity:0.045;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 28px 0;
-      border-bottom: 1px solid #171717;
-      position: sticky;
-      top: 0;
-      background: rgba(247, 244, 237, 0.92);
-      backdrop-filter: blur(10px);
-      z-index: 10;
+    /* ── TIMECODE sidebar ── */
+    #timecode {
+      position: fixed; left:0; top:0; bottom:0; width:42px; z-index:300;
+      background: var(--black2);
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; align-items:center;
+      padding: 20px 0;
+      gap:0;
+    }
+    .tc-label {
+      writing-mode:vertical-rl; text-orientation:mixed;
+      font-size:0.5rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--amber); opacity:0.6; margin-bottom:20px;
+    }
+    #tc-time {
+      writing-mode:vertical-rl;
+      font-size:0.55rem; letter-spacing:0.1em;
+      color:var(--amber2); opacity:0.85;
+      font-variant-numeric: tabular-nums;
+    }
+    .tc-perf {
+      width:8px; height:6px; border:1px solid var(--amber);
+      opacity:0.3; flex-shrink:0; margin:3px 0;
+    }
+    .tc-bottom {
+      margin-top:auto;
+      writing-mode:vertical-rl;
+      font-size:0.48rem; letter-spacing:0.2em;
+      color:var(--cream3); text-transform:uppercase;
     }
 
-    .logo {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+    /* ── PROGRESS BAR right side ── */
+    #progress-bar {
+      position:fixed; right:0; top:0; bottom:0; width:3px; z-index:300;
+      background:var(--border);
+    }
+    #progress-fill {
+      width:100%; background:var(--amber);
+      transition:height 0.1s linear;
+      height:0%;
     }
 
+    /* ── NAV ── */
     nav {
-      display: flex;
-      gap: 28px;
-      font-size: 0.95rem;
-      text-transform: lowercase;
+      position:fixed; top:0; left:42px; right:3px; z-index:400;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 4%;
+      background:linear-gradient(to bottom, rgba(5,7,10,0.97) 0%, transparent 100%);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-logo {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:1.1rem; letter-spacing:0.2em;
+      color:var(--amber2); text-decoration:none;
+    }
+    .nav-links { display:flex; gap:28px; list-style:none; }
+    .nav-links a {
+      font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--cream3); text-decoration:none; transition:color 0.2s;
+    }
+    .nav-links a:hover { color:var(--amber2); }
+    .nav-right {
+      font-size:0.5rem; letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--cream3);
+    }
+    .nav-right span { color:var(--amber); }
+
+    /* ── MAIN OFFSET ── */
+    main { margin-left:42px; margin-right:3px; }
+
+    /* ── CLAPPERBOARD HERO ── */
+    #hero {
+      min-height:100vh; position:relative; overflow:hidden;
+      display:flex; flex-direction:column; justify-content:flex-end;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 60% 70% at 60% 40%, rgba(232,160,32,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 10% 80%, rgba(139,26,26,0.06) 0%, transparent 55%);
+    }
+    /* film perforations top */
+    .perfs {
+      position:absolute; top:0; left:0; right:0; height:36px;
+      background:var(--black2);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center;
+      padding:0 24px; gap:18px;
+      z-index:2;
+    }
+    .perf {
+      width:18px; height:12px; border:1px solid var(--amber);
+      border-radius:2px; opacity:0.25; flex-shrink:0;
+    }
+    .perfs-meta {
+      margin-left:auto;
+      font-size:0.5rem; letter-spacing:0.18em; color:var(--amber); opacity:0.5;
+    }
+    /* film perforations bottom */
+    .perfs-bot {
+      position:absolute; bottom:0; left:0; right:0; height:36px;
+      background:var(--black2);
+      border-top:1px solid var(--border);
+      display:flex; align-items:center;
+      padding:0 24px; gap:18px;
+      z-index:2;
     }
 
-    nav a {
-      border-bottom: 1px solid transparent;
+    /* clapper overlay */
+    .clapper-overlay {
+      position:absolute; top:50%; left:4%;
+      transform:translateY(-55%);
+      z-index:3; opacity:0.07;
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(8rem,18vw,18rem);
+      color:var(--amber); line-height:1;
+      letter-spacing:-0.03em;
+      pointer-events:none;
+      white-space:nowrap;
     }
 
-    nav a:hover {
-      border-bottom-color: #171717;
+    .hero-body {
+      position:relative; z-index:4;
+      padding: 60px 4% 80px;
     }
 
-    .hero {
-      min-height: 78vh;
-      display: grid;
-      grid-template-columns: 0.9fr 2.1fr;
-      gap: 60px;
-      align-items: center;
-      border-bottom: 1px solid #171717;
+    /* scene label */
+    .scene-label {
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:0.55rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--amber); margin-bottom:28px;
+      border:1px solid var(--border2); padding:6px 14px;
+    }
+    .scene-label::before {
+      content:''; width:8px; height:8px; border-radius:50%;
+      background:var(--red2); animation:blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* TITLE */
+    .hero-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(5rem, 14vw, 13rem);
+      line-height:0.88; letter-spacing:0.02em;
+      color:var(--cream); margin-bottom:6px;
+    }
+    .hero-title .gold { color:var(--amber2); }
+
+    .hero-subtitle {
+      font-family:'Cormorant Garamond', serif;
+      font-size:clamp(1.1rem,2.2vw,1.6rem);
+      font-style:italic; color:var(--cream2);
+      letter-spacing:0.05em; margin-bottom:40px;
     }
 
-    .eyebrow {
-      font-size: 0.9rem;
-      text-transform: lowercase;
-      color: #5f5b52;
-      margin-bottom: 18px;
+    /* clapper data strip */
+    .clapper-strip {
+      display:flex; gap:0; flex-wrap:wrap;
+      margin-bottom:40px;
+      border:1px solid var(--border);
+    }
+    .clapper-cell {
+      padding:10px 20px;
+      border-right:1px solid var(--border);
+      flex-shrink:0;
+    }
+    .clapper-cell:last-child { border-right:none; }
+    .cc-key {
+      font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase;
+      color:var(--amber); display:block; margin-bottom:4px;
+    }
+    .cc-val {
+      font-size:0.75rem; letter-spacing:0.06em; color:var(--cream);
     }
 
-    .hero h1 {
-      font-size: clamp(4.2rem, 12vw, 10rem);
-      line-height: 0.92;
-      letter-spacing: -0.08em;
-      font-weight: 800;
+    .hero-desc {
+      max-width:560px;
+      font-family:'Cormorant Garamond', serif;
+      font-size:1.05rem; line-height:1.9; color:var(--cream2);
+      margin-bottom:40px; font-weight:300;
     }
 
-    .hero-info {
-      align-self: end;
-      padding-bottom: 74px;
-      max-width: 560px;
-      color: #3f3b34;
-      font-size: 1.05rem;
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn-film {
+      display:inline-flex; align-items:center; gap:10px;
+      padding:13px 26px;
+      font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase;
+      text-decoration:none; transition:all 0.25s;
+    }
+    .btn-film.primary {
+      background:var(--amber); color:var(--black); border:1px solid var(--amber);
+    }
+    .btn-film.primary:hover { background:var(--amber2); }
+    .btn-film.outline {
+      background:transparent; color:var(--amber); border:1px solid var(--border2);
+    }
+    .btn-film.outline:hover { border-color:var(--amber); color:var(--amber2); }
+
+    /* ── SECTION COMMON ── */
+    .sec { padding:100px 4%; }
+    .sec-head {
+      display:flex; align-items:center; gap:16px;
+      margin-bottom:60px;
+    }
+    .scene-num {
+      font-size:0.52rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--amber); border:1px solid var(--border2); padding:4px 10px;
+    }
+    .sec-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(2rem,4vw,3.2rem);
+      letter-spacing:0.05em; color:var(--cream);
+    }
+    .sec-rule { flex:1; height:1px; background:var(--border); }
+    .scene-int {
+      font-size:0.5rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--cream3);
     }
 
-    .hero-info p + p {
-      margin-top: 18px;
+    /* ── ABOUT ── */
+    #about { background:var(--black2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:70px; align-items:start; }
+    .about-quote {
+      font-family:'Cormorant Garamond', serif;
+      font-size:clamp(1.3rem,2.4vw,1.75rem);
+      font-style:italic; color:var(--amber2);
+      line-height:1.6; margin-bottom:28px;
+      border-left:2px solid var(--amber); padding-left:20px;
+    }
+    .about-body p {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; line-height:1.95; color:var(--cream2); margin-bottom:14px;
+      font-weight:300;
+    }
+    .slate {
+      background:var(--black3);
+      border:1px solid var(--border);
+    }
+    .slate-bar {
+      background:var(--amber); padding:10px 16px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .slate-bar-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:0.95rem; letter-spacing:0.08em; color:var(--black);
+    }
+    .slate-bar-num {
+      font-size:0.55rem; letter-spacing:0.12em; color:var(--black); opacity:0.7;
+    }
+    .slate-diag {
+      height:5px;
+      background: repeating-linear-gradient(
+        -45deg, var(--black) 0px, var(--black) 8px,
+        var(--amber) 8px, var(--amber) 16px
+      );
+    }
+    .slate-body { padding:20px; }
+    .slate-row {
+      display:flex; justify-content:space-between; align-items:baseline;
+      padding:10px 0; border-bottom:1px solid var(--border);
+      font-size:0.7rem;
+    }
+    .slate-row:last-child { border-bottom:none; }
+    .slate-key { color:var(--amber); letter-spacing:0.1em; font-size:0.55rem; text-transform:uppercase; }
+    .slate-val { color:var(--cream); letter-spacing:0.05em; }
+
+    /* ── WORK ── */
+    #work { background:var(--black); }
+    .projects { display:flex; flex-direction:column; gap:2px; }
+
+    .proj-card {
+      border:1px solid var(--border);
+      background:var(--black2);
+      display:grid; grid-template-columns:80px 1fr auto;
+      align-items:stretch;
+      transition:border-color 0.3s;
+      position:relative; overflow:hidden;
+    }
+    .proj-card:hover { border-color:var(--border2); }
+    .proj-card::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to right, var(--amber3), transparent 30%);
+      opacity:0; transition:opacity 0.4s;
+      pointer-events:none;
+    }
+    .proj-card:hover::after { opacity:1; }
+
+    .proj-side {
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:20px 0; gap:12px;
+      background:var(--black3);
+    }
+    .proj-perf { width:10px; height:8px; border:1px solid var(--amber); border-radius:1px; opacity:0.3; }
+
+    .proj-body { padding:36px 32px; position:relative; z-index:1; }
+    .proj-scene {
+      font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--amber); margin-bottom:12px; display:flex; align-items:center; gap:10px;
+    }
+    .proj-scene::before { content:''; width:20px; height:1px; background:var(--amber); opacity:0.5; }
+    .proj-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(1.6rem,3vw,2.4rem);
+      letter-spacing:0.04em; color:var(--cream);
+      margin-bottom:12px; line-height:1.1;
+      transition:color 0.3s;
+    }
+    .proj-card:hover .proj-title { color:var(--amber2); }
+    .proj-desc {
+      font-family:'Cormorant Garamond', serif;
+      font-size:0.98rem; line-height:1.85; color:var(--cream2);
+      max-width:600px; margin-bottom:20px; font-weight:300;
+    }
+    .proj-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .p-tag {
+      font-size:0.5rem; letter-spacing:0.12em; text-transform:uppercase;
+      padding:4px 9px; border:1px solid var(--border); color:var(--cream3);
     }
 
-    section {
-      padding: 96px 0;
-      border-bottom: 1px solid #171717;
+    .proj-action {
+      padding:24px; display:flex; align-items:center; justify-content:center;
+      border-left:1px solid var(--border); min-width:140px;
+      position:relative; z-index:1;
     }
-
-    .section-grid {
-      display: grid;
-      grid-template-columns: 0.9fr 2.1fr;
-      gap: 60px;
+    .proj-btn {
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      text-decoration:none;
     }
-
-    .section-label {
-      font-size: 0.95rem;
-      text-transform: lowercase;
-      color: #5f5b52;
+    .proj-btn-label {
+      font-size:0.52rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--amber); transition:color 0.2s;
     }
-
-    .section-title {
-      font-size: clamp(2.4rem, 5vw, 5rem);
-      line-height: 0.98;
-      letter-spacing: -0.06em;
-      font-weight: 800;
-      max-width: 760px;
-      margin-bottom: 38px;
+    .proj-btn:hover .proj-btn-label { color:var(--amber2); }
+    .proj-btn-arr {
+      width:36px; height:36px; border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; color:var(--amber);
+      transition:background 0.2s, color 0.2s;
     }
-
-    .about-text {
-      max-width: 760px;
-      font-size: 1.18rem;
-      color: #292724;
+    .proj-btn:hover .proj-btn-arr { background:var(--amber); color:var(--black); }
+    .proj-status-badge {
+      font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase;
+      padding:6px 12px; border:1px solid var(--border); color:var(--cream3);
+      text-align:center;
     }
+    .badge-post { color:#7ab5b5; border-color:rgba(122,181,181,0.3); }
+    .badge-dev  { color:var(--amber); border-color:var(--border2); }
 
-    .about-text p + p {
-      margin-top: 22px;
+    /* ── SKILLS ── */
+    #skills { background:var(--black2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    /* credits roll style */
+    .credits-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .credit-col { background:var(--black2); padding:0; }
+    .credit-header {
+      background:var(--black3); padding:18px 24px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:12px;
     }
-
-    .work-list {
-      display: flex;
-      flex-direction: column;
-      border-top: 1px solid #171717;
+    .credit-header-num { font-size:0.5rem; letter-spacing:0.2em; color:var(--amber); opacity:0.6; }
+    .credit-header-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:1rem; letter-spacing:0.1em; color:var(--cream);
     }
-
-    .work-item {
-      display: grid;
-      grid-template-columns: 110px 1fr 210px;
-      gap: 34px;
-      padding: 34px 0;
-      border-bottom: 1px solid #171717;
+    .credit-items { padding:8px 0; }
+    .credit-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:13px 24px;
+      border-bottom:1px solid var(--border);
+      transition:background 0.2s;
     }
-
-    .work-number {
-      color: #5f5b52;
-      font-size: 0.95rem;
+    .credit-item:last-child { border-bottom:none; }
+    .credit-item:hover { background:var(--amber3); }
+    .credit-name {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; color:var(--cream); font-weight:400;
     }
-
-    .work-item h3 {
-      font-size: clamp(1.6rem, 3vw, 2.8rem);
-      letter-spacing: -0.05em;
-      line-height: 1;
-      margin-bottom: 14px;
+    .credit-role {
+      font-size:0.48rem; letter-spacing:0.15em; text-transform:uppercase;
+      padding:3px 8px; border:1px solid;
     }
+    .role-lead  { color:var(--amber2);  border-color:rgba(232,160,32,0.3); }
+    .role-focus { color:#7ab5b5; border-color:rgba(122,181,181,0.3); }
+    .role-sup   { color:var(--cream3);  border-color:var(--border); }
 
-    .work-item p {
-      max-width: 700px;
-      color: #3f3b34;
-      font-size: 1rem;
+    /* ── CONTACT ── */
+    #contact { background:var(--black); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .contact-left {}
+    .contact-big {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(3rem,7vw,6rem);
+      letter-spacing:0.04em; line-height:0.9;
+      color:var(--cream); margin-bottom:24px;
     }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
+    .contact-big em {
+      font-family:'Cormorant Garamond', serif;
+      font-style:italic; color:var(--amber2);
+      font-size:0.75em;
     }
-
-    .tag {
-      border: 1px solid #171717;
-      border-radius: 999px;
-      padding: 5px 11px;
-      font-size: 0.82rem;
-      color: #171717;
-      background: transparent;
+    .contact-sub {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; line-height:1.85; color:var(--cream2); font-weight:300;
     }
-
-    .work-link {
-      justify-self: end;
-      align-self: start;
-      border: 1px solid #171717;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
+    .contact-links { display:flex; flex-direction:column; gap:0; }
+    .c-item {
+      display:flex; align-items:center; gap:18px;
+      padding:26px 0; border-bottom:1px solid var(--border);
+      text-decoration:none; transition:padding-left 0.3s;
     }
-
-    .work-link:hover {
-      background: #171717;
-      color: #f7f4ed;
+    .c-item:first-child { border-top:1px solid var(--border); }
+    .c-item:hover { padding-left:10px; }
+    .c-icon-box {
+      width:40px; height:40px; border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      background:var(--black2);
     }
-
-    .toolkit {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
+    .c-icon-box svg { width:14px; height:14px; stroke:var(--amber); fill:none; stroke-width:1.5; }
+    .c-key { font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); display:block; margin-bottom:5px; }
+    .c-val { font-size:0.85rem; color:var(--cream); letter-spacing:0.03em; }
+    .c-arrow { margin-left:auto; color:var(--amber); opacity:0; transition:opacity 0.3s; font-size:1.1rem; }
+    .c-item:hover .c-arrow { opacity:1; }
+    .contact-location {
+      margin-top:28px; display:flex; align-items:center; gap:10px;
+      font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--cream3);
     }
+    .loc-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); opacity:0.5; animation:blink 2s infinite; }
 
-    .toolkit-column {
-      border-top: 1px solid #171717;
-      padding-top: 22px;
-    }
-
-    .toolkit-column h3 {
-      font-size: 1.15rem;
-      margin-bottom: 18px;
-      letter-spacing: -0.03em;
-    }
-
-    .toolkit-column ul {
-      list-style: none;
-    }
-
-    .toolkit-column li {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(23, 23, 23, 0.18);
-      color: #3f3b34;
-    }
-
-    .level {
-      color: #7a756b;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
-
-    .contact-title {
-      font-size: clamp(3rem, 8vw, 8rem);
-      line-height: 0.92;
-      letter-spacing: -0.08em;
-      font-weight: 800;
-      margin-bottom: 36px;
-    }
-
-    .contact-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .contact-links a,
-    .contact-links span {
-      border: 1px solid #171717;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 0.95rem;
-    }
-
-    .contact-links a:hover {
-      background: #171717;
-      color: #f7f4ed;
-    }
-
+    /* ── FOOTER ── */
     footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 28px 0 42px;
-      font-size: 0.9rem;
-      color: #5f5b52;
+      margin-left:0; padding:22px 4%;
+      background:var(--black2); border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .footer-l { font-size:0.5rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--cream3); }
+    .footer-r { font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; color:var(--amber); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .about-grid, .contact-grid { grid-template-columns:1fr; gap:48px; }
+      .credits-grid { grid-template-columns:1fr; }
+      .proj-card { grid-template-columns:40px 1fr; }
+      .proj-action { display:none; }
+      .proj-body { padding:24px 20px; }
+    }
+    @media(max-width:640px) {
+      .nav-links, .nav-right { display:none; }
+      #timecode { display:none; }
+      main { margin-left:0; }
+      nav { left:0; }
+      #progress-bar { display:none; }
+      .clapper-strip { flex-direction:column; gap:0; }
+      .clapper-cell { border-right:none; border-bottom:1px solid var(--border); }
     }
 
-    @media (max-width: 820px) {
-      header {
-        align-items: flex-start;
-        gap: 20px;
-      }
-
-      nav {
-        gap: 14px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      .hero,
-      .section-grid {
-        grid-template-columns: 1fr;
-        gap: 34px;
-      }
-
-      .hero {
-        min-height: auto;
-        padding: 90px 0 70px;
-      }
-
-      .hero-info {
-        align-self: auto;
-        padding-bottom: 0;
-      }
-
-      section {
-        padding: 68px 0;
-      }
-
-      .work-item {
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-
-      .work-link {
-        justify-self: start;
-      }
-
-      .toolkit {
-        grid-template-columns: 1fr;
-      }
-
-      footer {
-        flex-direction: column;
-      }
-    }
+    /* ── ENTRANCE ANIMATIONS ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+    .scene-label   { animation:fadeUp 0.7s 0.15s both; }
+    .hero-title    { animation:fadeUp 0.9s 0.28s both; }
+    .hero-subtitle { animation:fadeUp 0.7s 0.42s both; }
+    .clapper-strip { animation:fadeUp 0.7s 0.52s both; }
+    .hero-desc     { animation:fadeUp 0.7s 0.60s both; }
+    .hero-btns     { animation:fadeUp 0.7s 0.70s both; }
   </style>
 </head>
-
 <body>
-  <div class="page">
-    <header>
-      <a class="logo" href="#top">wang.xinru</a>
-      <nav>
-        <a href="#about">about</a>
-        <a href="#work">work</a>
-        <a href="#skills">skills</a>
-        <a href="#contact">contact</a>
-      </nav>
-    </header>
 
-    <main id="top">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">portfolio / 2026</p>
-          <h1>Wang Xinru,<br>working between film and data.</h1>
-        </div>
+<!-- Cursor -->
+<div id="cur"></div>
+<div class="cur-dot" id="cur-dot"></div>
 
-        <div class="hero-info">
-          <p>
-            Arts and Big Data student at Sungkyunkwan University, interested in film, visual media, creative technology, and data storytelling.
-          </p>
-          <p>
-            Based in Seoul · film / data visualization / interactive media
-          </p>
-        </div>
-      </section>
-
-      <section id="about">
-        <div class="section-grid">
-          <p class="section-label">about</p>
-          <div>
-            <h2 class="section-title">A film student building visual stories with data.</h2>
-            <div class="about-text">
-              <p>
-                I am interested in combining visual media, film, design, and data analysis. My projects often explore how information can be organized, visualized, and presented in a clear and interactive way.
-              </p>
-              <p>
-                Through my work, I want to connect creative production with digital tools, especially in projects where film culture, audience behavior, and visual design meet.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="work">
-        <div class="section-grid">
-          <p class="section-label">selected work</p>
-          <div>
-            <h2 class="section-title">Projects I designed, built, and refined.</h2>
-
-            <div class="work-list">
-              <article class="work-item">
-                <div class="work-number">01 / 03</div>
-                <div>
-                  <h3>CineStats — Film Festival Analytics</h3>
-                  <p>
-                    A Streamlit movie data dashboard using real-time TMDb data. It explores popular movies, top-rated films, directors, ratings, genres, popularity, and movie trends through interactive charts, filters, tables, search functions, and CSV export.
-                  </p>
-                  <div class="tags">
-                    <span class="tag">Streamlit</span>
-                    <span class="tag">Python</span>
-                    <span class="tag">TMDb API</span>
-                    <span class="tag">Data Visualization</span>
-                  </div>
-                </div>
-                <a class="work-link" href="https://wangxinrufinalcinestats-ecna9pefzg6hadmy4ghttb.streamlit.app/" target="_blank">view project</a>
-              </article>
-
-              <article class="work-item">
-                <div class="work-number">02 / 03</div>
-                <div>
-                  <h3>When You Come Around Me</h3>
-                  <p>
-                    A short film project exploring healing, self-exile, and emotional return through a quiet visual style. The project focuses on atmosphere, restrained cinematography, and the metaphor of wind.
-                  </p>
-                  <div class="tags">
-                    <span class="tag">Short Film</span>
-                    <span class="tag">Directing</span>
-                    <span class="tag">Cinematography</span>
-                    <span class="tag">Visual Storytelling</span>
-                  </div>
-                </div>
-                <span class="work-link">coming soon</span>
-              </article>
-
-              <article class="work-item">
-                <div class="work-number">03 / 03</div>
-                <div>
-                  <h3>Creative Technology Portfolio</h3>
-                  <p>
-                    A personal portfolio space for presenting film-related, design-related, and data-related projects in a minimal visual format.
-                  </p>
-                  <div class="tags">
-                    <span class="tag">HTML</span>
-                    <span class="tag">CSS</span>
-                    <span class="tag">Portfolio Design</span>
-                  </div>
-                </div>
-                <span class="work-link">in progress</span>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="skills">
-        <div class="section-grid">
-          <p class="section-label">toolkit</p>
-          <div>
-            <h2 class="section-title">Tools and skills I use often.</h2>
-
-            <div class="toolkit">
-              <div class="toolkit-column">
-                <h3>Data & Code</h3>
-                <ul>
-                  <li><span>Python</span><span class="level">often</span></li>
-                  <li><span>Streamlit</span><span class="level">often</span></li>
-                  <li><span>Data Visualization</span><span class="level">often</span></li>
-                  <li><span>Dashboard Design</span><span class="level">often</span></li>
-                </ul>
-              </div>
-
-              <div class="toolkit-column">
-                <h3>Film & Media</h3>
-                <ul>
-                  <li><span>Film Production</span><span class="level">often</span></li>
-                  <li><span>Directing</span><span class="level">often</span></li>
-                  <li><span>Video Editing</span><span class="level">often</span></li>
-                  <li><span>Visual Storytelling</span><span class="level">focus</span></li>
-                </ul>
-              </div>
-
-              <div class="toolkit-column">
-                <h3>Design</h3>
-                <ul>
-                  <li><span>Visual Design</span><span class="level">often</span></li>
-                  <li><span>Interactive Media</span><span class="level">learning</span></li>
-                  <li><span>Presentation Design</span><span class="level">often</span></li>
-                  <li><span>Creative Research</span><span class="level">focus</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact">
-        <p class="section-label">say hello</p>
-        <h2 class="contact-title">Let's make something worth watching.</h2>
-        <div class="contact-links">
-          <a href="mailto:wxr2320704536@gmail.com">wxr2320704536@gmail.com</a>
-          <a href="https://github.com/2320704536" target="_blank">GitHub</a>
-          <span>Seoul, South Korea</span>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>© 2026 Wang Xinru</p>
-      <p>Built in Seoul · Film, data & creative technology</p>
-    </footer>
+<!-- Timecode sidebar -->
+<div id="timecode" aria-hidden="true">
+  <span class="tc-label">REC</span>
+  <span id="tc-time">00:00:00:00</span>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 0;">
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
   </div>
+  <span class="tc-bottom">35mm</span>
+</div>
+
+<!-- Progress bar -->
+<div id="progress-bar" aria-hidden="true"><div id="progress-fill"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">WANG XINRU</a>
+  <ul class="nav-links">
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#work">WORK</a></li>
+    <li><a href="#skills">SKILLS</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+  <div class="nav-right">ARTS &amp; BIG DATA · <span>SKKU</span></div>
+</nav>
+
+<main>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="perfs" aria-hidden="true">
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <span class="perfs-meta">ASA 400 · 35mm · 24fps</span>
+  </div>
+  <div class="clapper-overlay" aria-hidden="true">XINRU</div>
+  <div class="hero-body">
+    <div class="scene-label">SCENE 01 · INT. PORTFOLIO · DAY</div>
+    <h1 class="hero-title">WANG<br><span class="gold">XINRU</span></h1>
+    <p class="hero-subtitle">Working between film and data.</p>
+    <div class="clapper-strip">
+      <div class="clapper-cell">
+        <span class="cc-key">Director</span>
+        <span class="cc-val">Wang Xinru</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Production</span>
+        <span class="cc-val">SKKU Arts &amp; Big Data</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Location</span>
+        <span class="cc-val">Seoul, Korea</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Format</span>
+        <span class="cc-val">Film / Data / Design</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Year</span>
+        <span class="cc-val">2026</span>
+      </div>
+    </div>
+    <p class="hero-desc">
+      Arts and Big Data student at Sungkyunkwan University, interested in film,
+      visual media, creative technology, and data storytelling.
+      Based in Seoul — film / data visualization / interactive media.
+    </p>
+    <div class="hero-btns">
+      <a href="#work" class="btn-film primary">View Projects →</a>
+      <a href="#contact" class="btn-film outline">Say Hello</a>
+    </div>
+  </div>
+  <div class="perfs-bot" aria-hidden="true">
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 01</span>
+      <h2 class="sec-title">ABOUT</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · DAY</span>
+    </div>
+    <div class="about-grid">
+      <div class="about-body">
+        <p class="about-quote">A film student building visual stories with data.</p>
+        <p>I am interested in combining visual media, film, design, and data analysis. My projects often explore how information can be organized, visualized, and presented in a clear and interactive way.</p>
+        <p>Through my work, I want to connect creative production with digital tools, especially in projects where film culture, audience behavior, and visual design meet.</p>
+      </div>
+      <div class="slate">
+        <div class="slate-bar">
+          <span class="slate-bar-title">PRODUCTION SLATE</span>
+          <span class="slate-bar-num">#WX-2026</span>
+        </div>
+        <div class="slate-diag"></div>
+        <div class="slate-body">
+          <div class="slate-row">
+            <span class="slate-key">University</span>
+            <span class="slate-val">Sungkyunkwan Univ.</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">Major</span>
+            <span class="slate-val">Arts &amp; Big Data</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">Location</span>
+            <span class="slate-val">Seoul, South Korea</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">GitHub</span>
+            <span class="slate-val">wangxinru04</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">Status</span>
+            <span class="slate-val" style="color:var(--amber)">● Available</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORK ── -->
+<section id="work">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 02</span>
+      <h2 class="sec-title">SELECTED WORK</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · NIGHT</span>
+    </div>
+    <div class="projects">
+
+      <!-- 01 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-scene">01 / 03 · DATA VISUALIZATION · RELEASED</div>
+          <h3 class="proj-title">CineStats — Film Festival Analytics</h3>
+          <p class="proj-desc">A Streamlit movie data dashboard using real-time TMDb data. Explores popular movies, top-rated films, directors, ratings, genres, popularity, and movie trends through interactive charts, filters, tables, search functions, and CSV export.</p>
+          <div class="proj-tags">
+            <span class="p-tag">Streamlit</span>
+            <span class="p-tag">Python</span>
+            <span class="p-tag">TMDb API</span>
+            <span class="p-tag">Data Visualization</span>
+            <span class="p-tag">CSV Export</span>
+          </div>
+        </div>
+        <div class="proj-action">
+          <a class="proj-btn" href="https://wangxinrufinalcinestats-ecna9pefzg6hadmy4ghttb.streamlit.app/" target="_blank" rel="noopener">
+            <span class="proj-btn-label">RELEASED</span>
+            <div class="proj-btn-arr">→</div>
+            <span class="proj-btn-label">View Project</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-scene">02 / 03 · SHORT FILM · IN POST-PRODUCTION</div>
+          <h3 class="proj-title">When You Come Around Me</h3>
+          <p class="proj-desc">A short film exploring healing, self-exile, and emotional return through a quiet visual style. The project focuses on atmosphere, restrained cinematography, and the metaphor of wind.</p>
+          <div class="proj-tags">
+            <span class="p-tag">Short Film</span>
+            <span class="p-tag">Directing</span>
+            <span class="p-tag">Cinematography</span>
+            <span class="p-tag">Visual Storytelling</span>
+          </div>
+        </div>
+        <div class="proj-action">
+          <span class="proj-status-badge badge-post">IN POST</span>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-scene">03 / 03 · PORTFOLIO · IN DEVELOPMENT</div>
+          <h3 class="proj-title">Creative Technology Portfolio</h3>
+          <p class="proj-desc">A personal portfolio space for presenting film-related, design-related, and data-related projects in a minimal visual format.</p>
+          <div class="proj-tags">
+            <span class="p-tag">HTML</span>
+            <span class="p-tag">CSS</span>
+            <span class="p-tag">Portfolio Design</span>
+          </div>
+        </div>
+        <div class="proj-action">
+          <span class="proj-status-badge badge-dev">DEVELOPMENT</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 03</span>
+      <h2 class="sec-title">TOOLKIT · END CREDITS</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · DAY</span>
+    </div>
+    <div class="credits-grid">
+
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">01</span>
+          <span class="credit-header-title">DATA &amp; CODE</span>
+        </div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Python</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Streamlit</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Data Visualization</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Dashboard Design</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">02</span>
+          <span class="credit-header-title">FILM &amp; MEDIA</span>
+        </div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Film Production</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Directing</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Video Editing</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Visual Storytelling</span>
+            <span class="credit-role role-focus">FOCUS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">03</span>
+          <span class="credit-header-title">DESIGN</span>
+        </div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Visual Design</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Interactive Media</span>
+            <span class="credit-role role-sup">SUPPORTING</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Presentation Design</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Creative Research</span>
+            <span class="credit-role role-focus">FOCUS</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 04</span>
+      <h2 class="sec-title">SAY HELLO</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">EXT. · GOLDEN HOUR</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-left">
+        <div class="contact-big">LET'S MAKE<br>SOMETHING<br><em>worth watching.</em></div>
+        <p class="contact-sub">Open to collaborations in film, data visualization, and creative technology. Always happy to connect over a project.</p>
+        <div class="contact-location">
+          <div class="loc-dot"></div>
+          Seoul, South Korea · Available for collaboration
+        </div>
+      </div>
+      <div class="contact-links">
+        <a class="c-item" href="mailto:wxr2320704536@gmail.com">
+          <div class="c-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="1.5"/><path d="M2 7l10 6.5L22 7"/></svg>
+          </div>
+          <div>
+            <span class="c-key">Email</span>
+            <span class="c-val">wxr2320704536@gmail.com</span>
+          </div>
+          <span class="c-arrow">→</span>
+        </a>
+        <a class="c-item" href="https://github.com/wangxinru04" target="_blank" rel="noopener">
+          <div class="c-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </div>
+          <div>
+            <span class="c-key">GitHub</span>
+            <span class="c-val">wangxinru04</span>
+          </div>
+          <span class="c-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-l">© 2026 Wang Xinru · Built in Seoul · Film, data &amp; creative technology</span>
+  <span class="footer-r">WANG XINRU</span>
+</footer>
+
+<script>
+  // Cursor
+  const cur = document.getElementById('cur');
+  const curDot = document.getElementById('cur-dot');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+    curDot.style.left = e.clientX + 'px';
+    curDot.style.top  = e.clientY + 'px';
+  });
+
+  // Timecode counter
+  let frames = 0;
+  const tcEl = document.getElementById('tc-time');
+  setInterval(() => {
+    frames++;
+    const f  = frames % 24;
+    const s  = Math.floor(frames / 24) % 60;
+    const m  = Math.floor(frames / (24*60)) % 60;
+    const h  = Math.floor(frames / (24*60*60)) % 24;
+    const pad = n => String(n).padStart(2,'0');
+    tcEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}:${pad(f)}`;
+  }, 1000/24);
+
+  // Scroll progress
+  const fill = document.getElementById('progress-fill');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.height = pct + '%';
+  });
+</script>
 </body>
 </html>
