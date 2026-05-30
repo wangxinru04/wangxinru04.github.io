@@ -1,683 +1,944 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>王欣如 - 影像制作 / 游戏策划作品集</title>
+  <title>Wang Xinru — Film & Data</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --black:#05070a;
-      --black2:#0a0d13;
-      --black3:#0f1219;
-      --amber:#e8a020;
-      --amber2:#f5c458;
-      --amber3:rgba(232,160,32,0.1);
-      --red:#8b1a1a;
-      --red2:#c0392b;
-      --cream:#f0e8d8;
-      --cream2:rgba(240,232,216,0.68);
-      --cream3:rgba(240,232,216,0.34);
-      --border:rgba(232,160,32,0.15);
-      --border2:rgba(232,160,32,0.32);
-      --cyan:#7ab5b5;
+      --black:   #05070a;
+      --black2:  #0a0d13;
+      --black3:  #0f1219;
+      --amber:   #e8a020;
+      --amber2:  #f5c458;
+      --amber3:  rgba(232,160,32,0.1);
+      --red:     #8b1a1a;
+      --red2:    #c0392b;
+      --cream:   #f0e8d8;
+      --cream2:  rgba(240,232,216,0.62);
+      --cream3:  rgba(240,232,216,0.28);
+      --border:  rgba(232,160,32,0.15);
+      --border2: rgba(232,160,32,0.32);
+      --scan:    rgba(0,0,0,0.35);
     }
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      background:var(--black);
-      color:var(--cream);
-      font-family:"Share Tech Mono","Noto Serif SC",serif;
-      overflow-x:hidden;
-      cursor:none;
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: 400;
+      overflow-x: hidden;
+      cursor: none;
     }
-    body::before{
-      content:"";position:fixed;inset:0;z-index:8000;pointer-events:none;
-      background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
+
+    /* ── CUSTOM CURSOR: crosshair ── */
+    #cur {
+      position: fixed; z-index: 9999; pointer-events: none;
+      width: 32px; height: 32px;
+      transform: translate(-50%, -50%);
     }
-    body::after{
-      content:"";position:fixed;inset:0;z-index:8001;pointer-events:none;opacity:.045;
+    #cur::before, #cur::after {
+      content: ''; position: absolute; background: var(--amber);
+    }
+    #cur::before { width:1px; height:100%; left:50%; top:0; }
+    #cur::after  { width:100%; height:1px; top:50%; left:0; }
+    .cur-dot {
+      position:fixed; z-index:9999; pointer-events:none;
+      width:4px; height:4px; border-radius:50%;
+      background:var(--amber2);
+      transform:translate(-50%,-50%);
+    }
+
+    /* ── SCANLINES overlay ── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:8000; pointer-events:none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.08) 3px,
+        rgba(0,0,0,0.08) 4px
+      );
+    }
+    /* grain */
+    body::after {
+      content:''; position:fixed; inset:0; z-index:8001; pointer-events:none;
+      opacity:0.045;
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-    #cur{position:fixed;z-index:9999;pointer-events:none;width:32px;height:32px;transform:translate(-50%,-50%)}
-    #cur::before,#cur::after{content:"";position:absolute;background:var(--amber)}
-    #cur::before{width:1px;height:100%;left:50%;top:0}
-    #cur::after{width:100%;height:1px;top:50%;left:0}
-    .cur-dot{position:fixed;z-index:9999;pointer-events:none;width:4px;height:4px;border-radius:50%;background:var(--amber2);transform:translate(-50%,-50%)}
-    #timecode{
-      position:fixed;left:0;top:0;bottom:0;width:42px;z-index:300;background:var(--black2);
-      border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:20px 0;
+
+    /* ── TIMECODE sidebar ── */
+    #timecode {
+      position: fixed; left:0; top:0; bottom:0; width:42px; z-index:300;
+      background: var(--black2);
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; align-items:center;
+      padding: 20px 0;
+      gap:0;
     }
-    .tc-label,.tc-bottom{writing-mode:vertical-rl;text-orientation:mixed;text-transform:uppercase}
-    .tc-label{font-size:.5rem;letter-spacing:.25em;color:var(--amber);opacity:.65;margin-bottom:20px}
-    #tc-time{writing-mode:vertical-rl;font-size:.55rem;letter-spacing:.1em;color:var(--amber2);opacity:.85;font-variant-numeric:tabular-nums}
-    .tc-perf{width:8px;height:6px;border:1px solid var(--amber);opacity:.3;flex-shrink:0;margin:3px 0}
-    .tc-bottom{margin-top:auto;font-size:.48rem;letter-spacing:.2em;color:var(--cream3)}
-    #progress-bar{position:fixed;right:0;top:0;bottom:0;width:3px;z-index:300;background:var(--border)}
-    #progress-fill{width:100%;height:0;background:var(--amber);transition:height .1s linear}
-    nav{
-      position:fixed;top:0;left:42px;right:3px;z-index:400;display:flex;align-items:center;justify-content:space-between;
-      padding:16px 4%;background:linear-gradient(to bottom,rgba(5,7,10,.97),transparent);border-bottom:1px solid var(--border);
+    .tc-label {
+      writing-mode:vertical-rl; text-orientation:mixed;
+      font-size:0.5rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--amber); opacity:0.6; margin-bottom:20px;
     }
-    .nav-logo{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:.2em;color:var(--amber2);text-decoration:none}
-    .nav-links{display:flex;gap:26px;list-style:none}
-    .nav-links a,.nav-right{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase}
-    .nav-links a{color:var(--cream3);text-decoration:none;transition:color .2s}
-    .nav-links a:hover{color:var(--amber2)}
-    .nav-right{color:var(--cream3)}
-    .nav-right span{color:var(--amber)}
-    main{margin-left:42px;margin-right:3px}
-    #hero{min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
-    .hero-bg{
-      position:absolute;inset:0;
-      background:radial-gradient(ellipse 60% 70% at 60% 40%,rgba(232,160,32,.07),transparent 65%),
-      radial-gradient(ellipse 40% 50% at 10% 80%,rgba(139,26,26,.06),transparent 55%);
+    #tc-time {
+      writing-mode:vertical-rl;
+      font-size:0.55rem; letter-spacing:0.1em;
+      color:var(--amber2); opacity:0.85;
+      font-variant-numeric: tabular-nums;
     }
-    .perfs,.perfs-bot{
-      position:absolute;left:0;right:0;height:36px;background:var(--black2);display:flex;align-items:center;padding:0 24px;gap:18px;z-index:2;
+    .tc-perf {
+      width:8px; height:6px; border:1px solid var(--amber);
+      opacity:0.3; flex-shrink:0; margin:3px 0;
     }
-    .perfs{top:0;border-bottom:1px solid var(--border)}
-    .perfs-bot{bottom:0;border-top:1px solid var(--border)}
-    .perf{width:18px;height:12px;border:1px solid var(--amber);border-radius:2px;opacity:.25;flex-shrink:0}
-    .perfs-meta{margin-left:auto;font-size:.5rem;letter-spacing:.18em;color:var(--amber);opacity:.5}
-    .clapper-overlay{
-      position:absolute;top:50%;left:4%;transform:translateY(-55%);z-index:3;opacity:.07;
-      font-family:"Bebas Neue",sans-serif;font-size:clamp(8rem,18vw,18rem);color:var(--amber);line-height:1;letter-spacing:-.03em;white-space:nowrap;
+    .tc-bottom {
+      margin-top:auto;
+      writing-mode:vertical-rl;
+      font-size:0.48rem; letter-spacing:0.2em;
+      color:var(--cream3); text-transform:uppercase;
     }
-    .hero-body{position:relative;z-index:4;padding:60px 4% 80px}
-    .scene-label{
-      display:inline-flex;align-items:center;gap:10px;font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--amber);margin-bottom:28px;border:1px solid var(--border2);padding:6px 14px;
+
+    /* ── PROGRESS BAR right side ── */
+    #progress-bar {
+      position:fixed; right:0; top:0; bottom:0; width:3px; z-index:300;
+      background:var(--border);
     }
-    .scene-label::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red2);animation:blink 1.5s ease-in-out infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-    .hero-title{
-      font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:clamp(4.8rem,13vw,12rem);
-      line-height:.9;letter-spacing:.02em;color:var(--cream);margin-bottom:12px;
+    #progress-fill {
+      width:100%; background:var(--amber);
+      transition:height 0.1s linear;
+      height:0%;
     }
-    .hero-title .gold{color:var(--amber2)}
-    .hero-subtitle{
-      font-family:"Noto Serif SC",serif;font-size:clamp(1.05rem,2vw,1.55rem);color:var(--cream2);
-      letter-spacing:.08em;margin-bottom:36px;
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:42px; right:3px; z-index:400;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 4%;
+      background:linear-gradient(to bottom, rgba(5,7,10,0.97) 0%, transparent 100%);
+      border-bottom:1px solid var(--border);
     }
-    .clapper-strip{display:flex;gap:0;flex-wrap:wrap;margin-bottom:34px;border:1px solid var(--border)}
-    .clapper-cell{padding:10px 20px;border-right:1px solid var(--border);flex-shrink:0}
-    .clapper-cell:last-child{border-right:none}
-    .cc-key{font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:4px}
-    .cc-val{font-size:.75rem;letter-spacing:.05em;color:var(--cream)}
-    .hero-desc{
-      max-width:760px;font-family:"Noto Serif SC",serif;font-size:1.02rem;line-height:1.95;color:var(--cream2);
-      margin-bottom:38px;
+    .nav-logo {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:1.1rem; letter-spacing:0.2em;
+      color:var(--amber2); text-decoration:none;
     }
-    .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
-    .btn-film{
-      display:inline-flex;align-items:center;gap:10px;padding:13px 24px;font-size:.62rem;letter-spacing:.16em;
-      text-transform:uppercase;text-decoration:none;transition:all .25s;
+    .nav-links { display:flex; gap:28px; list-style:none; }
+    .nav-links a {
+      font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--cream3); text-decoration:none; transition:color 0.2s;
     }
-    .btn-film.primary{background:var(--amber);color:var(--black);border:1px solid var(--amber)}
-    .btn-film.primary:hover{background:var(--amber2)}
-    .btn-film.outline{background:transparent;color:var(--amber);border:1px solid var(--border2)}
-    .btn-film.outline:hover{border-color:var(--amber);color:var(--amber2)}
-    .sec{padding:100px 4%}
-    .sec-head{display:flex;align-items:center;gap:16px;margin-bottom:56px}
-    .scene-num{font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);border:1px solid var(--border2);padding:4px 10px}
-    .sec-title{font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:.05em;color:var(--cream)}
-    .sec-rule{flex:1;height:1px;background:var(--border)}
-    .scene-int{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream3)}
-    #about,#skills{background:var(--black2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-    .about-grid{display:grid;grid-template-columns:3fr 2fr;gap:70px;align-items:start}
-    .about-quote{
-      font-family:"Noto Serif SC",serif;font-size:clamp(1.25rem,2.2vw,1.65rem);color:var(--amber2);
-      line-height:1.65;margin-bottom:28px;border-left:2px solid var(--amber);padding-left:20px;
+    .nav-links a:hover { color:var(--amber2); }
+    .nav-right {
+      font-size:0.5rem; letter-spacing:0.14em; text-transform:uppercase;
+      color:var(--cream3);
     }
-    .about-body p{font-family:"Noto Serif SC",serif;font-size:1rem;line-height:1.95;color:var(--cream2);margin-bottom:14px}
-    .slate{background:var(--black3);border:1px solid var(--border)}
-    .slate-bar{background:var(--amber);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
-    .slate-bar-title{font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:.95rem;letter-spacing:.08em;color:var(--black)}
-    .slate-bar-num{font-size:.55rem;letter-spacing:.12em;color:var(--black);opacity:.75}
-    .slate-diag{height:5px;background:repeating-linear-gradient(-45deg,var(--black) 0,var(--black) 8px,var(--amber) 8px,var(--amber) 16px)}
-    .slate-body{padding:20px}
-    .slate-row{display:flex;justify-content:space-between;gap:18px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--border);font-size:.7rem}
-    .slate-row:last-child{border-bottom:none}
-    .slate-key{color:var(--amber);letter-spacing:.1em;font-size:.55rem;text-transform:uppercase;white-space:nowrap}
-    .slate-val{color:var(--cream);letter-spacing:.04em;text-align:right}
-    .jump-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
-    .jump-card{
-      position:relative;min-height:280px;background:var(--black2);padding:34px;display:flex;flex-direction:column;justify-content:space-between;
-      color:var(--cream);text-decoration:none;overflow:hidden;
+    .nav-right span { color:var(--amber); }
+
+    /* ── MAIN OFFSET ── */
+    main { margin-left:42px; margin-right:3px; }
+
+    /* ── CLAPPERBOARD HERO ── */
+    #hero {
+      min-height:100vh; position:relative; overflow:hidden;
+      display:flex; flex-direction:column; justify-content:flex-end;
     }
-    .jump-card::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--amber3),transparent 45%);opacity:.6;transition:opacity .25s}
-    .jump-card:hover::after{opacity:1}
-    .jump-kicker{position:relative;z-index:1;font-size:.52rem;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}
-    .jump-title{position:relative;z-index:1;font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:clamp(2.2rem,5vw,4.4rem);line-height:1;color:var(--cream)}
-    .jump-desc{position:relative;z-index:1;font-family:"Noto Serif SC",serif;color:var(--cream2);line-height:1.8;max-width:520px}
-    .jump-arrow{position:absolute;right:28px;bottom:24px;z-index:1;color:var(--amber);font-size:2rem}
-    .projects{display:flex;flex-direction:column;gap:2px}
-    .proj-card{border:1px solid var(--border);background:var(--black2);display:grid;grid-template-columns:80px 1fr auto;align-items:stretch;position:relative;overflow:hidden;transition:border-color .3s}
-    .proj-card:hover{border-color:var(--border2)}
-    .proj-card::after{content:"";position:absolute;inset:0;background:linear-gradient(to right,var(--amber3),transparent 32%);opacity:0;transition:opacity .35s;pointer-events:none}
-    .proj-card:hover::after{opacity:1}
-    .proj-side{border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;gap:12px;background:var(--black3)}
-    .proj-perf{width:10px;height:8px;border:1px solid var(--amber);border-radius:1px;opacity:.3}
-    .proj-body{padding:34px 32px;position:relative;z-index:1}
-    .proj-scene{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;display:flex;align-items:center;gap:10px}
-    .proj-scene::before{content:"";width:20px;height:1px;background:var(--amber);opacity:.5}
-    .proj-title{font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:clamp(1.55rem,3vw,2.35rem);letter-spacing:.04em;color:var(--cream);margin-bottom:12px;line-height:1.15}
-    .proj-card:hover .proj-title{color:var(--amber2)}
-    .proj-desc{font-family:"Noto Serif SC",serif;font-size:.98rem;line-height:1.9;color:var(--cream2);max-width:820px;margin-bottom:20px}
-    .proj-tags{display:flex;flex-wrap:wrap;gap:6px}
-    .p-tag{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border:1px solid var(--border);color:var(--cream3)}
-    .proj-links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 22px}
-    .inline-link{
-      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border2);
-      color:var(--amber);text-decoration:none;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;
-      transition:background .2s,color .2s,border-color .2s;position:relative;z-index:3;
+    .hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 60% 70% at 60% 40%, rgba(232,160,32,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 10% 80%, rgba(139,26,26,0.06) 0%, transparent 55%);
     }
-    .inline-link:hover{background:var(--amber);color:var(--black);border-color:var(--amber)}
-    .film-gallery{margin-top:24px;border:1px solid var(--border);background:rgba(5,7,10,.34)}
-    .gallery-head{
-      display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;
-      border-bottom:1px solid var(--border);background:var(--black3);
+    /* film perforations top */
+    .perfs {
+      position:absolute; top:0; left:0; right:0; height:36px;
+      background:var(--black2);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center;
+      padding:0 24px; gap:18px;
+      z-index:2;
     }
-    .gallery-title{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber)}
-    .gallery-note{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3)}
-    .still-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border)}
-    .still-grid + .gallery-head{border-top:1px solid var(--border)}
-    .still{
-      display:block;position:relative;aspect-ratio:16/10;background:var(--black);overflow:hidden;
+    .perf {
+      width:18px; height:12px; border:1px solid var(--amber);
+      border-radius:2px; opacity:0.25; flex-shrink:0;
     }
-    .still.tall{aspect-ratio:4/5}
-    .still img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.86) contrast(1.04);transition:transform .35s,filter .35s}
-    .still:hover img{transform:scale(1.035);filter:saturate(1) contrast(1.08)}
-    .proj-action{padding:24px;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);min-width:150px;position:relative;z-index:1}
-    .proj-btn{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none}
-    .proj-btn-label{font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);transition:color .2s;text-align:center}
-    .proj-btn:hover .proj-btn-label{color:var(--amber2)}
-    .proj-btn-arr{width:36px;height:36px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--amber);transition:background .2s,color .2s}
-    .proj-btn:hover .proj-btn-arr{background:var(--amber);color:var(--black)}
-    .proj-status-badge{font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--border);color:var(--cream3);text-align:center}
-    .badge-cyan{color:var(--cyan);border-color:rgba(122,181,181,.3)}
-    .badge-gold{color:var(--amber);border-color:var(--border2)}
-    .credit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
-    .credit-col{background:var(--black2)}
-    .credit-header{background:var(--black3);padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-    .credit-header-num{font-size:.5rem;letter-spacing:.2em;color:var(--amber);opacity:.65}
-    .credit-header-title{font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:1rem;letter-spacing:.1em;color:var(--cream)}
-    .credit-items{padding:8px 0}
-    .credit-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 24px;border-bottom:1px solid var(--border);transition:background .2s}
-    .credit-item:last-child{border-bottom:none}
-    .credit-item:hover{background:var(--amber3)}
-    .credit-name{font-family:"Noto Serif SC",serif;font-size:.98rem;color:var(--cream)}
-    .credit-role{font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border:1px solid;white-space:nowrap}
-    .role-lead{color:var(--amber2);border-color:rgba(232,160,32,.3)}
-    .role-focus{color:var(--cyan);border-color:rgba(122,181,181,.3)}
-    .role-sup{color:var(--cream3);border-color:var(--border)}
-    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-    .contact-big{font-family:"Bebas Neue","Noto Serif SC",sans-serif;font-size:clamp(3rem,7vw,6rem);letter-spacing:.04em;line-height:.95;color:var(--cream);margin-bottom:24px}
-    .contact-big em{font-family:"Noto Serif SC",serif;font-style:normal;color:var(--amber2);font-size:.55em}
-    .contact-sub{font-family:"Noto Serif SC",serif;font-size:1rem;line-height:1.9;color:var(--cream2)}
-    .contact-links{display:flex;flex-direction:column;gap:0}
-    .c-item{display:flex;align-items:center;gap:18px;padding:24px 0;border-bottom:1px solid var(--border);text-decoration:none;transition:padding-left .3s}
-    .c-item:first-child{border-top:1px solid var(--border)}
-    .c-item:hover{padding-left:10px}
-    .c-icon-box{width:40px;height:40px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--black2);color:var(--amber)}
-    .c-key{font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:5px}
-    .c-val{font-size:.85rem;color:var(--cream);letter-spacing:.03em}
-    .c-arrow{margin-left:auto;color:var(--amber);opacity:0;transition:opacity .3s;font-size:1.1rem}
-    .c-item:hover .c-arrow{opacity:1}
-    .contact-location{margin-top:28px;display:flex;align-items:center;gap:10px;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream3)}
-    .loc-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);opacity:.5;animation:blink 2s infinite}
-    footer{padding:22px 4%;background:var(--black2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-left:42px;margin-right:3px}
-    .footer-l{font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cream3)}
-    .footer-r{font-family:"Bebas Neue",sans-serif;font-size:1rem;letter-spacing:.15em;color:var(--amber)}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-    .scene-label{animation:fadeUp .7s .15s both}
-    .hero-title{animation:fadeUp .9s .28s both}
-    .hero-subtitle{animation:fadeUp .7s .42s both}
-    .clapper-strip{animation:fadeUp .7s .52s both}
-    .hero-desc{animation:fadeUp .7s .6s both}
-    .hero-btns{animation:fadeUp .7s .7s both}
-    @media(max-width:980px){
-      .about-grid,.contact-grid{grid-template-columns:1fr;gap:48px}
-      .credit-grid,.jump-grid{grid-template-columns:1fr}
-      .proj-card{grid-template-columns:40px 1fr}
-      .proj-action{display:none}
-      .proj-body{padding:24px 20px}
-      .still-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .perfs-meta {
+      margin-left:auto;
+      font-size:0.5rem; letter-spacing:0.18em; color:var(--amber); opacity:0.5;
     }
-    @media(max-width:700px){
-      body{cursor:auto}
-      #cur,.cur-dot,#timecode,#progress-bar{display:none}
-      main,footer{margin-left:0;margin-right:0}
-      nav{left:0;right:0}
-      .nav-links,.nav-right{display:none}
-      .clapper-strip{flex-direction:column}
-      .clapper-cell{border-right:none;border-bottom:1px solid var(--border)}
-      .clapper-cell:last-child{border-bottom:none}
-      .sec{padding:80px 5%}
-      .sec-head{align-items:flex-start;gap:12px;flex-wrap:wrap}
-      .scene-int{display:none}
+    /* film perforations bottom */
+    .perfs-bot {
+      position:absolute; bottom:0; left:0; right:0; height:36px;
+      background:var(--black2);
+      border-top:1px solid var(--border);
+      display:flex; align-items:center;
+      padding:0 24px; gap:18px;
+      z-index:2;
     }
+
+    /* clapper overlay */
+    .clapper-overlay {
+      position:absolute; top:50%; left:4%;
+      transform:translateY(-55%);
+      z-index:3; opacity:0.07;
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(8rem,18vw,18rem);
+      color:var(--amber); line-height:1;
+      letter-spacing:-0.03em;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+
+    .hero-body {
+      position:relative; z-index:4;
+      padding: 60px 4% 80px;
+    }
+
+    /* scene label */
+    .scene-label {
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:0.55rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--amber); margin-bottom:28px;
+      border:1px solid var(--border2); padding:6px 14px;
+    }
+    .scene-label::before {
+      content:''; width:8px; height:8px; border-radius:50%;
+      background:var(--red2); animation:blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* TITLE */
+    .hero-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(5rem, 14vw, 13rem);
+      line-height:0.88; letter-spacing:0.02em;
+      color:var(--cream); margin-bottom:6px;
+    }
+    .hero-title .gold { color:var(--amber2); }
+
+    .hero-subtitle {
+      font-family:'Cormorant Garamond', serif;
+      font-size:clamp(1.1rem,2.2vw,1.6rem);
+      font-style:italic; color:var(--cream2);
+      letter-spacing:0.05em; margin-bottom:40px;
+    }
+
+    /* clapper data strip */
+    .clapper-strip {
+      display:flex; gap:0; flex-wrap:wrap;
+      margin-bottom:40px;
+      border:1px solid var(--border);
+    }
+    .clapper-cell {
+      padding:10px 20px;
+      border-right:1px solid var(--border);
+      flex-shrink:0;
+    }
+    .clapper-cell:last-child { border-right:none; }
+    .cc-key {
+      font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase;
+      color:var(--amber); display:block; margin-bottom:4px;
+    }
+    .cc-val {
+      font-size:0.75rem; letter-spacing:0.06em; color:var(--cream);
+    }
+
+    .hero-desc {
+      max-width:560px;
+      font-family:'Cormorant Garamond', serif;
+      font-size:1.05rem; line-height:1.9; color:var(--cream2);
+      margin-bottom:40px; font-weight:300;
+    }
+
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn-film {
+      display:inline-flex; align-items:center; gap:10px;
+      padding:13px 26px;
+      font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase;
+      text-decoration:none; transition:all 0.25s;
+    }
+    .btn-film.primary {
+      background:var(--amber); color:var(--black); border:1px solid var(--amber);
+    }
+    .btn-film.primary:hover { background:var(--amber2); }
+    .btn-film.outline {
+      background:transparent; color:var(--amber); border:1px solid var(--border2);
+    }
+    .btn-film.outline:hover { border-color:var(--amber); color:var(--amber2); }
+
+    /* ── SECTION COMMON ── */
+    .sec { padding:100px 4%; }
+    .sec-head {
+      display:flex; align-items:center; gap:16px;
+      margin-bottom:60px;
+    }
+    .scene-num {
+      font-size:0.52rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--amber); border:1px solid var(--border2); padding:4px 10px;
+    }
+    .sec-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(2rem,4vw,3.2rem);
+      letter-spacing:0.05em; color:var(--cream);
+    }
+    .sec-rule { flex:1; height:1px; background:var(--border); }
+    .scene-int {
+      font-size:0.5rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--cream3);
+    }
+
+    /* ── ABOUT ── */
+    #about { background:var(--black2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:70px; align-items:start; }
+    .about-quote {
+      font-family:'Cormorant Garamond', serif;
+      font-size:clamp(1.3rem,2.4vw,1.75rem);
+      font-style:italic; color:var(--amber2);
+      line-height:1.6; margin-bottom:28px;
+      border-left:2px solid var(--amber); padding-left:20px;
+    }
+    .about-body p {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; line-height:1.95; color:var(--cream2); margin-bottom:14px;
+      font-weight:300;
+    }
+    .slate {
+      background:var(--black3);
+      border:1px solid var(--border);
+    }
+    .slate-bar {
+      background:var(--amber); padding:10px 16px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .slate-bar-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:0.95rem; letter-spacing:0.08em; color:var(--black);
+    }
+    .slate-bar-num {
+      font-size:0.55rem; letter-spacing:0.12em; color:var(--black); opacity:0.7;
+    }
+    .slate-diag {
+      height:5px;
+      background: repeating-linear-gradient(
+        -45deg, var(--black) 0px, var(--black) 8px,
+        var(--amber) 8px, var(--amber) 16px
+      );
+    }
+    .slate-body { padding:20px; }
+    .slate-row {
+      display:flex; justify-content:space-between; align-items:baseline;
+      padding:10px 0; border-bottom:1px solid var(--border);
+      font-size:0.7rem;
+    }
+    .slate-row:last-child { border-bottom:none; }
+    .slate-key { color:var(--amber); letter-spacing:0.1em; font-size:0.55rem; text-transform:uppercase; }
+    .slate-val { color:var(--cream); letter-spacing:0.05em; }
+
+    /* ── WORK ── */
+    #work { background:var(--black); }
+    .projects { display:flex; flex-direction:column; gap:2px; }
+
+    .proj-card {
+      border:1px solid var(--border);
+      background:var(--black2);
+      display:grid; grid-template-columns:80px 1fr auto;
+      align-items:stretch;
+      transition:border-color 0.3s;
+      position:relative; overflow:hidden;
+    }
+    .proj-card:hover { border-color:var(--border2); }
+    .proj-card::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to right, var(--amber3), transparent 30%);
+      opacity:0; transition:opacity 0.4s;
+      pointer-events:none;
+    }
+    .proj-card:hover::after { opacity:1; }
+
+    .proj-side {
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:20px 0; gap:12px;
+      background:var(--black3);
+    }
+    .proj-perf { width:10px; height:8px; border:1px solid var(--amber); border-radius:1px; opacity:0.3; }
+
+    .proj-body { padding:36px 32px; position:relative; z-index:1; }
+    .proj-scene {
+      font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--amber); margin-bottom:12px; display:flex; align-items:center; gap:10px;
+    }
+    .proj-scene::before { content:''; width:20px; height:1px; background:var(--amber); opacity:0.5; }
+    .proj-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(1.6rem,3vw,2.4rem);
+      letter-spacing:0.04em; color:var(--cream);
+      margin-bottom:12px; line-height:1.1;
+      transition:color 0.3s;
+    }
+    .proj-card:hover .proj-title { color:var(--amber2); }
+    .proj-desc {
+      font-family:'Cormorant Garamond', serif;
+      font-size:0.98rem; line-height:1.85; color:var(--cream2);
+      max-width:600px; margin-bottom:20px; font-weight:300;
+    }
+    .proj-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .p-tag {
+      font-size:0.5rem; letter-spacing:0.12em; text-transform:uppercase;
+      padding:4px 9px; border:1px solid var(--border); color:var(--cream3);
+    }
+
+    .proj-action {
+      padding:24px; display:flex; align-items:center; justify-content:center;
+      border-left:1px solid var(--border); min-width:140px;
+      position:relative; z-index:1;
+    }
+    .proj-btn {
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      text-decoration:none;
+    }
+    .proj-btn-label {
+      font-size:0.52rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--amber); transition:color 0.2s;
+    }
+    .proj-btn:hover .proj-btn-label { color:var(--amber2); }
+    .proj-btn-arr {
+      width:36px; height:36px; border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; color:var(--amber);
+      transition:background 0.2s, color 0.2s;
+    }
+    .proj-btn:hover .proj-btn-arr { background:var(--amber); color:var(--black); }
+    .proj-status-badge {
+      font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase;
+      padding:6px 12px; border:1px solid var(--border); color:var(--cream3);
+      text-align:center;
+    }
+    .badge-post { color:#7ab5b5; border-color:rgba(122,181,181,0.3); }
+    .badge-dev  { color:var(--amber); border-color:var(--border2); }
+
+    /* ── SKILLS ── */
+    #skills { background:var(--black2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    /* credits roll style */
+    .credits-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .credit-col { background:var(--black2); padding:0; }
+    .credit-header {
+      background:var(--black3); padding:18px 24px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:12px;
+    }
+    .credit-header-num { font-size:0.5rem; letter-spacing:0.2em; color:var(--amber); opacity:0.6; }
+    .credit-header-title {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:1rem; letter-spacing:0.1em; color:var(--cream);
+    }
+    .credit-items { padding:8px 0; }
+    .credit-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:13px 24px;
+      border-bottom:1px solid var(--border);
+      transition:background 0.2s;
+    }
+    .credit-item:last-child { border-bottom:none; }
+    .credit-item:hover { background:var(--amber3); }
+    .credit-name {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; color:var(--cream); font-weight:400;
+    }
+    .credit-role {
+      font-size:0.48rem; letter-spacing:0.15em; text-transform:uppercase;
+      padding:3px 8px; border:1px solid;
+    }
+    .role-lead  { color:var(--amber2);  border-color:rgba(232,160,32,0.3); }
+    .role-focus { color:#7ab5b5; border-color:rgba(122,181,181,0.3); }
+    .role-sup   { color:var(--cream3);  border-color:var(--border); }
+
+    /* ── CONTACT ── */
+    #contact { background:var(--black); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .contact-left {}
+    .contact-big {
+      font-family:'Bebas Neue', sans-serif;
+      font-size:clamp(3rem,7vw,6rem);
+      letter-spacing:0.04em; line-height:0.9;
+      color:var(--cream); margin-bottom:24px;
+    }
+    .contact-big em {
+      font-family:'Cormorant Garamond', serif;
+      font-style:italic; color:var(--amber2);
+      font-size:0.75em;
+    }
+    .contact-sub {
+      font-family:'Cormorant Garamond', serif;
+      font-size:1rem; line-height:1.85; color:var(--cream2); font-weight:300;
+    }
+    .contact-links { display:flex; flex-direction:column; gap:0; }
+    .c-item {
+      display:flex; align-items:center; gap:18px;
+      padding:26px 0; border-bottom:1px solid var(--border);
+      text-decoration:none; transition:padding-left 0.3s;
+    }
+    .c-item:first-child { border-top:1px solid var(--border); }
+    .c-item:hover { padding-left:10px; }
+    .c-icon-box {
+      width:40px; height:40px; border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      background:var(--black2);
+    }
+    .c-icon-box svg { width:14px; height:14px; stroke:var(--amber); fill:none; stroke-width:1.5; }
+    .c-key { font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); display:block; margin-bottom:5px; }
+    .c-val { font-size:0.85rem; color:var(--cream); letter-spacing:0.03em; }
+    .c-arrow { margin-left:auto; color:var(--amber); opacity:0; transition:opacity 0.3s; font-size:1.1rem; }
+    .c-item:hover .c-arrow { opacity:1; }
+    .contact-location {
+      margin-top:28px; display:flex; align-items:center; gap:10px;
+      font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--cream3);
+    }
+    .loc-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); opacity:0.5; animation:blink 2s infinite; }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-left:0; padding:22px 4%;
+      background:var(--black2); border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .footer-l { font-size:0.5rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--cream3); }
+    .footer-r { font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; color:var(--amber); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .about-grid, .contact-grid { grid-template-columns:1fr; gap:48px; }
+      .credits-grid { grid-template-columns:1fr; }
+      .proj-card { grid-template-columns:40px 1fr; }
+      .proj-action { display:none; }
+      .proj-body { padding:24px 20px; }
+    }
+    @media(max-width:640px) {
+      .nav-links, .nav-right { display:none; }
+      #timecode { display:none; }
+      main { margin-left:0; }
+      nav { left:0; }
+      #progress-bar { display:none; }
+      .clapper-strip { flex-direction:column; gap:0; }
+      .clapper-cell { border-right:none; border-bottom:1px solid var(--border); }
+    }
+
+    /* ── ENTRANCE ANIMATIONS ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+    .scene-label   { animation:fadeUp 0.7s 0.15s both; }
+    .hero-title    { animation:fadeUp 0.9s 0.28s both; }
+    .hero-subtitle { animation:fadeUp 0.7s 0.42s both; }
+    .clapper-strip { animation:fadeUp 0.7s 0.52s both; }
+    .hero-desc     { animation:fadeUp 0.7s 0.60s both; }
+    .hero-btns     { animation:fadeUp 0.7s 0.70s both; }
   </style>
 </head>
 <body>
-  <div id="cur"></div>
-  <div class="cur-dot" id="cur-dot"></div>
 
-  <div id="timecode" aria-hidden="true">
-    <span class="tc-label">REC</span>
-    <span id="tc-time">00:00:00:00</span>
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 0">
-      <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
-      <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
-      <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
-    </div>
-    <span class="tc-bottom">35mm</span>
+<!-- Cursor -->
+<div id="cur"></div>
+<div class="cur-dot" id="cur-dot"></div>
+
+<!-- Timecode sidebar -->
+<div id="timecode" aria-hidden="true">
+  <span class="tc-label">REC</span>
+  <span id="tc-time">00:00:00:00</span>
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 0;">
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
+    <div class="tc-perf"></div><div class="tc-perf"></div><div class="tc-perf"></div>
   </div>
-  <div id="progress-bar" aria-hidden="true"><div id="progress-fill"></div></div>
+  <span class="tc-bottom">35mm</span>
+</div>
 
-  <nav>
-    <a href="#hero" class="nav-logo">WANG XINRU</a>
-    <ul class="nav-links">
-      <li><a href="#about">关于</a></li>
-      <li><a href="#tracks">作品方向</a></li>
-      <li><a href="#skills">技能</a></li>
-      <li><a href="#contact">联系</a></li>
-    </ul>
-    <div class="nav-right">PORTFOLIO · <span>2026</span></div>
-  </nav>
+<!-- Progress bar -->
+<div id="progress-bar" aria-hidden="true"><div id="progress-fill"></div></div>
 
-  <main>
-    <section id="hero">
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="perfs" aria-hidden="true">
-        <div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div>
-        <div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div>
-        <span class="perfs-meta">GAME DESIGN · FILM PRODUCTION · SEOUL</span>
-      </div>
-      <div class="clapper-overlay" aria-hidden="true">XINRU</div>
-      <div class="hero-body">
-        <div class="scene-label">作品集 · 影像制作 / 游戏策划</div>
-        <h1 class="hero-title">王<br><span class="gold">欣如</span></h1>
-        <p class="hero-subtitle">用影像组织情绪，用系统设计体验。</p>
-        <div class="clapper-strip">
-          <div class="clapper-cell"><span class="cc-key">姓名</span><span class="cc-val">王欣如</span></div>
-          <div class="clapper-cell"><span class="cc-key">方向</span><span class="cc-val">影像制作 / 游戏策划</span></div>
-          <div class="clapper-cell"><span class="cc-key">教育</span><span class="cc-val">成均馆大学 · 影像专业本科</span></div>
-          <div class="clapper-cell"><span class="cc-key">城市</span><span class="cc-val">韩国首尔 / 北京</span></div>
-          <div class="clapper-cell"><span class="cc-key">状态</span><span class="cc-val">本科毕业 / 项目合作</span></div>
-        </div>
-        <p class="hero-desc">
-          我毕业于成均馆大学影像专业，持续在影像制作、游戏策划、系统设计和视觉叙事之间寻找连接点。
-          作品围绕短片导演、商业影像执行、视觉内容设计与游戏原型展开，关注创意如何被组织成清晰、可体验的表达。
-        </p>
-        <div class="hero-btns">
-          <a href="#tracks" class="btn-film primary">查看作品方向 →</a>
-          <a href="#contact" class="btn-film outline">联系我</a>
-        </div>
-      </div>
-      <div class="perfs-bot" aria-hidden="true">
-        <div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div>
-        <div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div><div class="perf"></div>
-      </div>
-    </section>
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">WANG XINRU</a>
+  <ul class="nav-links">
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#work">WORK</a></li>
+    <li><a href="#skills">SKILLS</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+  <div class="nav-right">ARTS &amp; BIG DATA · <span>SKKU</span></div>
+</nav>
 
-    <section id="about">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">SCENE 01</span>
-          <h2 class="sec-title">关于我</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">PROFILE</span>
+<main>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="perfs" aria-hidden="true">
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <span class="perfs-meta">ASA 400 · 35mm · 24fps</span>
+  </div>
+  <div class="clapper-overlay" aria-hidden="true">XINRU</div>
+  <div class="hero-body">
+    <div class="scene-label">SCENE 01 · INT. PORTFOLIO · DAY</div>
+    <h1 class="hero-title">WANG<br><span class="gold">XINRU</span></h1>
+    <p class="hero-subtitle">Working between film and data.</p>
+    <div class="clapper-strip">
+      <div class="clapper-cell">
+        <span class="cc-key">Director</span>
+        <span class="cc-val">Wang Xinru</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Production</span>
+        <span class="cc-val">SKKU Arts &amp; Big Data</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Location</span>
+        <span class="cc-val">Seoul, Korea</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Format</span>
+        <span class="cc-val">Film / Data / Design</span>
+      </div>
+      <div class="clapper-cell">
+        <span class="cc-key">Year</span>
+        <span class="cc-val">2026</span>
+      </div>
+    </div>
+    <p class="hero-desc">
+      Arts and Big Data student at Sungkyunkwan University, interested in film,
+      visual media, creative technology, and data storytelling.
+      Based in Seoul — film / data visualization / interactive media.
+    </p>
+    <div class="hero-btns">
+      <a href="#work" class="btn-film primary">View Projects →</a>
+      <a href="#contact" class="btn-film outline">Say Hello</a>
+    </div>
+  </div>
+  <div class="perfs-bot" aria-hidden="true">
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+    <div class="perf"></div><div class="perf"></div><div class="perf"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 01</span>
+      <h2 class="sec-title">ABOUT</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · DAY</span>
+    </div>
+    <div class="about-grid">
+      <div class="about-body">
+        <p class="about-quote">A film student building visual stories with data.</p>
+        <p>I am interested in combining visual media, film, design, and data analysis. My projects often explore how information can be organized, visualized, and presented in a clear and interactive way.</p>
+        <p>Through my work, I want to connect creative production with digital tools, especially in projects where film culture, audience behavior, and visual design meet.</p>
+      </div>
+      <div class="slate">
+        <div class="slate-bar">
+          <span class="slate-bar-title">PRODUCTION SLATE</span>
+          <span class="slate-bar-num">#WX-2026</span>
         </div>
-        <div class="about-grid">
-          <div class="about-body">
-            <p class="about-quote">我希望把影像的叙事能力，带进更可互动、更可体验的内容设计里。</p>
-            <p>我毕业于成均馆大学影像专业，学习与实践集中在影像叙事、视觉设计、游戏策划和互动内容表达。</p>
-            <p>在影像制作中，我参与过导演、摄影、美术设计、现场协作、剪辑和后期等环节，熟悉从前期构思、分镜规划到现场执行与后期成片的完整流程。</p>
-            <p>在游戏策划中，我关注关卡设计、叙事结构、玩法机制、系统体验和玩家反馈，习惯把抽象创意拆解成规则、流程、画面和可执行方案。</p>
+        <div class="slate-diag"></div>
+        <div class="slate-body">
+          <div class="slate-row">
+            <span class="slate-key">University</span>
+            <span class="slate-val">Sungkyunkwan Univ.</span>
           </div>
-          <div class="slate">
-            <div class="slate-bar">
-              <span class="slate-bar-title">个人信息</span>
-              <span class="slate-bar-num">WX-2026</span>
-            </div>
-            <div class="slate-diag"></div>
-            <div class="slate-body">
-              <div class="slate-row"><span class="slate-key">学校</span><span class="slate-val">成均馆大学</span></div>
-              <div class="slate-row"><span class="slate-key">专业</span><span class="slate-val">影像专业 · 本科</span></div>
-              <div class="slate-row"><span class="slate-key">时间</span><span class="slate-val">2023 - 2026</span></div>
-              <div class="slate-row"><span class="slate-key">语言</span><span class="slate-val">中文 / 韩语 / 英语</span></div>
-              <div class="slate-row"><span class="slate-key">邮箱</span><span class="slate-val">2320704536@qq.com</span></div>
-              <div class="slate-row"><span class="slate-key">电话</span><span class="slate-val">13911900412</span></div>
-            </div>
+          <div class="slate-row">
+            <span class="slate-key">Major</span>
+            <span class="slate-val">Arts &amp; Big Data</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">Location</span>
+            <span class="slate-val">Seoul, South Korea</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">GitHub</span>
+            <span class="slate-val">wangxinru04</span>
+          </div>
+          <div class="slate-row">
+            <span class="slate-key">Status</span>
+            <span class="slate-val" style="color:var(--amber)">● Available</span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section id="tracks">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">SCENE 02</span>
-          <h2 class="sec-title">作品方向</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">CLICK TO JUMP</span>
+<!-- ── WORK ── -->
+<section id="work">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 02</span>
+      <h2 class="sec-title">SELECTED WORK</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · NIGHT</span>
+    </div>
+    <div class="projects">
+
+      <!-- 01 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
         </div>
-        <div class="jump-grid">
-          <a class="jump-card" href="#game">
-            <span class="jump-kicker">TRACK A · GAME DESIGN</span>
-            <h3 class="jump-title">游戏策划</h3>
-            <p class="jump-desc">系统设定、世界观设计、关卡与玩法机制、玩家行为反馈、社区体验与可执行设计方案。</p>
-            <span class="jump-arrow">→</span>
+        <div class="proj-body">
+          <div class="proj-scene">01 / 03 · DATA VISUALIZATION · RELEASED</div>
+          <h3 class="proj-title">CineStats — Film Festival Analytics</h3>
+          <p class="proj-desc">A Streamlit movie data dashboard using real-time TMDb data. Explores popular movies, top-rated films, directors, ratings, genres, popularity, and movie trends through interactive charts, filters, tables, search functions, and CSV export.</p>
+          <div class="proj-tags">
+            <span class="p-tag">Streamlit</span>
+            <span class="p-tag">Python</span>
+            <span class="p-tag">TMDb API</span>
+            <span class="p-tag">Data Visualization</span>
+            <span class="p-tag">CSV Export</span>
+          </div>
+        </div>
+        <div class="proj-action">
+          <a class="proj-btn" href="https://25wangxinrufinalcinestats-rigb4snoxr5cl3snezsmpt.streamlit.app/" target="_blank" rel="noopener">
+            <span class="proj-btn-label">RELEASED</span>
+            <div class="proj-btn-arr">→</div>
+            <span class="proj-btn-label">View Project</span>
           </a>
-          <a class="jump-card" href="#film">
-            <span class="jump-kicker">TRACK B · FILM PRODUCTION</span>
-            <h3 class="jump-title">影像制作</h3>
-            <p class="jump-desc">导演、摄影、美术、剪辑、后期与视觉风格把控，参与商业宣传、短片与校园影像项目。</p>
-            <span class="jump-arrow">→</span>
-          </a>
         </div>
       </div>
-    </section>
 
-    <section id="game">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">TRACK A</span>
-          <h2 class="sec-title">游戏策划作品</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">SYSTEM / LEVEL / NARRATIVE</span>
+      <!-- 02 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
         </div>
-        <div class="projects">
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">01 / 04 · 世界观设计 / 系统设定</div>
-              <h3 class="proj-title">《T.R.A.C / NOA》世界观设计</h3>
-              <p class="proj-desc">构建完整科幻世界观体系，包含资源控制机制与社会分层结构；设计核心系统 T.R.A.C（气候控制机制），作为冲突与玩法基础；搭建“统治组织 vs 反抗阵营”的对抗框架，支持任务与剧情扩展，并输出完整世界规则、分层体系与设定层面。</p>
-              <div class="proj-tags"><span class="p-tag">世界观</span><span class="p-tag">系统设定</span><span class="p-tag">叙事设计</span><span class="p-tag">科幻框架</span></div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-gold">概念设定</span></div>
+        <div class="proj-body">
+          <div class="proj-scene">02 / 03 · SHORT FILM · IN POST-PRODUCTION</div>
+          <h3 class="proj-title">When You Come Around Me</h3>
+          <p class="proj-desc">A short film exploring healing, self-exile, and emotional return through a quiet visual style. The project focuses on atmosphere, restrained cinematography, and the metaphor of wind.</p>
+          <div class="proj-tags">
+            <span class="p-tag">Short Film</span>
+            <span class="p-tag">Directing</span>
+            <span class="p-tag">Cinematography</span>
+            <span class="p-tag">Visual Storytelling</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">02 / 04 · 视觉小说 / 多分支叙事</div>
-              <h3 class="proj-title">《Between》视觉小说游戏</h3>
-              <p class="proj-desc">设计多分支叙事系统，构建多结局结构；完成叙事系统与游戏原型开发，实现从设定到可玩体验的落地。项目中使用 AI 生成工具辅助完成视觉内容创作，提升原型展示效率，并通过角色关系、抉择机制和情绪线强化沉浸体验。</p>
-              <div class="proj-tags"><span class="p-tag">视觉小说</span><span class="p-tag">分支叙事</span><span class="p-tag">多结局</span><span class="p-tag">原型开发</span></div>
-              <div class="film-gallery" aria-label="Between 游戏截图">
-                <div class="gallery-head">
-                  <span class="gallery-title">《Between》游戏截图</span>
-                  <span class="gallery-note">Visual Novel Prototype</span>
-                </div>
-                <div class="still-grid">
-                  <a class="still" href="assets/game/between-01.jpg" target="_blank" rel="noopener"><img src="assets/game/between-01.jpg" alt="《Between》游戏截图 1"></a>
-                  <a class="still" href="assets/game/between-02.jpg" target="_blank" rel="noopener"><img src="assets/game/between-02.jpg" alt="《Between》游戏截图 2"></a>
-                  <a class="still" href="assets/game/between-03.jpg" target="_blank" rel="noopener"><img src="assets/game/between-03.jpg" alt="《Between》游戏截图 3"></a>
-                  <a class="still" href="assets/game/between-04.jpg" target="_blank" rel="noopener"><img src="assets/game/between-04.jpg" alt="《Between》游戏截图 4"></a>
-                  <a class="still" href="assets/game/between-05.jpg" target="_blank" rel="noopener"><img src="assets/game/between-05.jpg" alt="《Between》游戏截图 5"></a>
-                  <a class="still" href="assets/game/between-06.jpg" target="_blank" rel="noopener"><img src="assets/game/between-06.jpg" alt="《Between》游戏截图 6"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-cyan">原型开发</span></div>
+        </div>
+        <div class="proj-action">
+          <span class="proj-status-badge badge-post">IN POST</span>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="proj-card">
+        <div class="proj-side" aria-hidden="true">
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+          <div class="proj-perf"></div><div class="proj-perf"></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-scene">03 / 03 · PORTFOLIO · IN DEVELOPMENT</div>
+          <h3 class="proj-title">Creative Technology Portfolio</h3>
+          <p class="proj-desc">A personal portfolio space for presenting film-related, design-related, and data-related projects in a minimal visual format.</p>
+          <div class="proj-tags">
+            <span class="p-tag">HTML</span>
+            <span class="p-tag">CSS</span>
+            <span class="p-tag">Portfolio Design</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">03 / 04 · 弹幕游戏 / 关卡设计</div>
-              <h3 class="proj-title">《Cactus Crisis》弹幕游戏</h3>
-              <p class="proj-desc">设计并实现弹幕类游戏核心玩法，包括移动、躲避与攻击；完成游戏从策划到实现的全过程，包含玩法设计、关卡搭建与机制实现。通过难度曲线、Boss 机制与道具系统控制节奏，并在开发过程中持续调试与迭代玩家反馈。</p>
-              <div class="proj-tags"><span class="p-tag">关卡设计</span><span class="p-tag">Boss 机制</span><span class="p-tag">难度曲线</span><span class="p-tag">Unity / Game Logic</span></div>
-              <div class="film-gallery" aria-label="Cactus Crisis 游戏截图">
-                <div class="gallery-head">
-                  <span class="gallery-title">《Cactus Crisis》游戏截图</span>
-                  <span class="gallery-note">Bullet Hell Gameplay</span>
-                </div>
-                <div class="still-grid">
-                  <a class="still" href="assets/game/cactus-01.jpg" target="_blank" rel="noopener"><img src="assets/game/cactus-01.jpg" alt="《Cactus Crisis》游戏截图 1"></a>
-                  <a class="still" href="assets/game/cactus-02.jpg" target="_blank" rel="noopener"><img src="assets/game/cactus-02.jpg" alt="《Cactus Crisis》游戏截图 2"></a>
-                  <a class="still" href="assets/game/cactus-03.jpg" target="_blank" rel="noopener"><img src="assets/game/cactus-03.jpg" alt="《Cactus Crisis》游戏截图 3"></a>
-                  <a class="still" href="assets/game/cactus-04.jpg" target="_blank" rel="noopener"><img src="assets/game/cactus-04.jpg" alt="《Cactus Crisis》游戏截图 4"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-gold">可玩项目</span></div>
+        </div>
+        <div class="proj-action">
+          <span class="proj-status-badge badge-dev">DEVELOPMENT</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 03</span>
+      <h2 class="sec-title">TOOLKIT · END CREDITS</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">INT. · DAY</span>
+    </div>
+    <div class="credits-grid">
+
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">01</span>
+          <span class="credit-header-title">DATA &amp; CODE</span>
+        </div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Python</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">04 / 04 · 玩家体验 / 社区系统</div>
-              <h3 class="proj-title">Roblox 社区优化项目</h3>
-              <p class="proj-desc">参与 Roblox 平台社区生态优化项目，聚焦玩家行为分析、社区公平性与合作玩法设计；研究多人与协作模式中的玩家行为，识别稀有资源驱动的社交分层与新手进入门槛问题，并设计并开发合作型 Roblox 游戏 Balloon Journey，通过共同护送气球机制引导玩家协作。</p>
-              <div class="proj-tags"><span class="p-tag">玩家行为</span><span class="p-tag">社区系统</span><span class="p-tag">合作玩法</span><span class="p-tag">Roblox</span></div>
-              <div class="film-gallery" aria-label="Roblox Balloon Journey 游戏截图">
-                <div class="gallery-head">
-                  <span class="gallery-title">Balloon Journey 游戏截图</span>
-                  <span class="gallery-note">Roblox Co-op Prototype</span>
-                </div>
-                <div class="still-grid">
-                  <a class="still" href="assets/game/roblox-01.jpg" target="_blank" rel="noopener"><img src="assets/game/roblox-01.jpg" alt="Balloon Journey 游戏截图 1"></a>
-                  <a class="still" href="assets/game/roblox-02.jpg" target="_blank" rel="noopener"><img src="assets/game/roblox-02.jpg" alt="Balloon Journey 游戏截图 2"></a>
-                  <a class="still" href="assets/game/roblox-03.jpg" target="_blank" rel="noopener"><img src="assets/game/roblox-03.jpg" alt="Balloon Journey 游戏截图 3"></a>
-                  <a class="still" href="assets/game/roblox-04.jpg" target="_blank" rel="noopener"><img src="assets/game/roblox-04.jpg" alt="Balloon Journey 游戏截图 4"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><a class="proj-btn" href="./游戏简历.pdf" target="_blank" rel="noopener"><span class="proj-btn-label">查看</span><div class="proj-btn-arr">→</div><span class="proj-btn-label">游戏简历</span></a></div>
+          <div class="credit-item">
+            <span class="credit-name">Streamlit</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Data Visualization</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Dashboard Design</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
         </div>
       </div>
-    </section>
 
-    <section id="film">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">TRACK B</span>
-          <h2 class="sec-title">影像制作经历</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">DIRECTING / CAMERA / ART / EDITING</span>
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">02</span>
+          <span class="credit-header-title">FILM &amp; MEDIA</span>
         </div>
-        <div class="projects">
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">01 / 04 · 综合影像项目</div>
-              <h3 class="proj-title">导演 / 摄影 / 美术 / 剪辑</h3>
-              <p class="proj-desc">参与多项影视及商业影像项目创作，在不同项目中担任导演、摄影、美术设计及剪辑等角色。熟悉影像项目从前期创意策划、分镜设计与视觉风格制定，到拍摄执行及后期剪辑的完整流程，能够与演员、画面构图及剪辑节奏配合，保障项目按计划完成。</p>
-              <div class="proj-tags"><span class="p-tag">导演</span><span class="p-tag">摄影</span><span class="p-tag">美术设计</span><span class="p-tag">剪辑后期</span></div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-gold">综合能力</span></div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Film Production</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">02 / 04 · 首尔钟路区城市宣传项目</div>
-              <h3 class="proj-title">自行车停车区域改善宣传片</h3>
-              <p class="proj-desc">与首尔钟路区宣传团队合作完成城市公共空间改善主题宣传项目，围绕共享自行车停车区域规范与城市公共秩序展开视觉传播。负责项目视频拍摄与海报视觉设计，包括前期画面构思、拍摄执行及后期视觉整合，通过影像与平面传播结合提升公共信息传播效果。</p>
-              <div class="proj-tags"><span class="p-tag">城市宣传</span><span class="p-tag">拍摄执行</span><span class="p-tag">海报设计</span><span class="p-tag">公共议题</span></div>
-              <div class="film-gallery" aria-label="自行车停车区域改善宣传片项目图像">
-                <div class="gallery-head"><span class="gallery-title">自行车停车区域改善宣传片</span><span class="gallery-note">Poster / Storyboard</span></div>
-                <div class="still-grid">
-                  <a class="still" href="assets/film/bicycle-01.jpg" target="_blank" rel="noopener"><img src="assets/film/bicycle-01.jpg" alt="自行车停车区域改善宣传片海报"></a>
-                  <a class="still tall" href="assets/film/bicycle-02.jpg" target="_blank" rel="noopener"><img src="assets/film/bicycle-02.jpg" alt="自行车停车区域改善宣传片分镜 1"></a>
-                  <a class="still" href="assets/film/bicycle-03.jpg" target="_blank" rel="noopener"><img src="assets/film/bicycle-03.jpg" alt="自行车停车区域改善宣传片分镜 2"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-cyan">实战项目</span></div>
+          <div class="credit-item">
+            <span class="credit-name">Directing</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">03 / 04 · 产品广告拍摄</div>
-              <h3 class="proj-title">正官庄 Everytime 产品广告拍摄</h3>
-              <p class="proj-desc">参与韩国品牌正官庄 Everytime 产品广告拍摄，负责场景美术设计与视觉布置。根据品牌调性设计拍摄空间与视觉风格，参与道具选择、场景构建及色彩搭配，统一画面观感并提升品牌形象与画面呈现效果。</p>
-              <div class="proj-tags"><span class="p-tag">广告影像</span><span class="p-tag">美术设计</span><span class="p-tag">道具选择</span><span class="p-tag">视觉风格</span></div>
-              <div class="film-gallery" aria-label="正官庄 Everytime 产品广告拍摄图像">
-                <div class="gallery-head"><span class="gallery-title">正官庄 Everytime 产品广告拍摄</span><span class="gallery-note">Commercial Frames</span></div>
-                <div class="still-grid">
-                  <a class="still" href="assets/film/ginseng-01.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-01.jpg" alt="正官庄 Everytime 产品广告拍摄画面 1"></a>
-                  <a class="still" href="assets/film/ginseng-02.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-02.jpg" alt="正官庄 Everytime 产品广告拍摄画面 2"></a>
-                  <a class="still" href="assets/film/ginseng-03.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-03.jpg" alt="正官庄 Everytime 产品广告拍摄画面 3"></a>
-                  <a class="still" href="assets/film/ginseng-04.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-04.jpg" alt="正官庄 Everytime 产品广告拍摄画面 4"></a>
-                  <a class="still" href="assets/film/ginseng-05.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-05.jpg" alt="正官庄 Everytime 产品广告拍摄画面 5"></a>
-                  <a class="still" href="assets/film/ginseng-06.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-06.jpg" alt="正官庄 Everytime 产品广告拍摄画面 6"></a>
-                  <a class="still" href="assets/film/ginseng-07.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-07.jpg" alt="正官庄 Everytime 产品广告拍摄画面 7"></a>
-                  <a class="still" href="assets/film/ginseng-08.jpg" target="_blank" rel="noopener"><img src="assets/film/ginseng-08.jpg" alt="正官庄 Everytime 产品广告拍摄画面 8"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><span class="proj-status-badge badge-gold">商业项目</span></div>
+          <div class="credit-item">
+            <span class="credit-name">Video Editing</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
-          <div class="proj-card">
-            <div class="proj-side" aria-hidden="true"><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div><div class="proj-perf"></div></div>
-            <div class="proj-body">
-              <div class="proj-scene">04 / 04 · 微电影 / 短片制作</div>
-              <h3 class="proj-title">微电影及短片导演项目</h3>
-              <p class="proj-desc">在微电影与短片项目中担任导演，负责影片从前期构思到最终成片的整体推进。工作内容包括主题与人物关系梳理、剧本方向确认、分镜设计、场面调度、演员沟通、现场拍摄组织以及后期剪辑节奏把控，最终完成可用于展映与作品集展示的短片作品。</p>
-              <div class="proj-links">
-                <a class="inline-link" href="https://www.bilibili.com/video/BV1X3Vg6QEis/?share_source=copy_web&amp;vd_source=cf225ff76632f2a4b0798249773849f1">观看《风停之前》 →</a>
-              </div>
-              <div class="proj-tags"><span class="p-tag">导演</span><span class="p-tag">短片创作</span><span class="p-tag">分镜设计</span><span class="p-tag">现场调度</span></div>
-              <div class="film-gallery" aria-label="微电影及短片剧照">
-                <div class="gallery-head">
-                  <span class="gallery-title">《昼夜流灰》剧照</span>
-                  <span class="gallery-note">Short Film Stills</span>
-                </div>
-                <div class="still-grid">
-                  <a class="still tall" href="assets/film/wind-before-01.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-01.jpg" alt="《昼夜流灰》剧照 1"></a>
-                  <a class="still tall" href="assets/film/wind-before-02.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-02.jpg" alt="《昼夜流灰》剧照 2"></a>
-                  <a class="still tall" href="assets/film/wind-before-03.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-03.jpg" alt="《昼夜流灰》剧照 3"></a>
-                  <a class="still tall" href="assets/film/wind-before-04.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-04.jpg" alt="《昼夜流灰》剧照 4"></a>
-                  <a class="still tall" href="assets/film/wind-before-05.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-05.jpg" alt="《昼夜流灰》剧照 5"></a>
-                  <a class="still tall" href="assets/film/wind-before-07.jpg" target="_blank" rel="noopener"><img src="assets/film/wind-before-07.jpg" alt="《昼夜流灰》剧照 6"></a>
-                </div>
-                <div class="gallery-head">
-                  <span class="gallery-title">《风停之前 / When You Come Around Me》剧照</span>
-                  <span class="gallery-note">Selected Frames</span>
-                </div>
-                <div class="still-grid">
-                  <a class="still" href="assets/film/come-around-01.jpg" target="_blank" rel="noopener"><img src="assets/film/come-around-01.jpg" alt="《风停之前 / When You Come Around Me》剧照 1"></a>
-                  <a class="still" href="assets/film/come-around-02.jpg" target="_blank" rel="noopener"><img src="assets/film/come-around-02.jpg" alt="《风停之前 / When You Come Around Me》剧照 2"></a>
-                  <a class="still" href="assets/film/come-around-03.jpg" target="_blank" rel="noopener"><img src="assets/film/come-around-03.jpg" alt="《风停之前 / When You Come Around Me》剧照 3"></a>
-                  <a class="still" href="assets/film/come-around-04.jpg" target="_blank" rel="noopener"><img src="assets/film/come-around-04.jpg" alt="《风停之前 / When You Come Around Me》剧照 4"></a>
-                </div>
-              </div>
-            </div>
-            <div class="proj-action"><a class="proj-btn" href="./影像简历.pdf" target="_blank" rel="noopener"><span class="proj-btn-label">查看</span><div class="proj-btn-arr">→</div><span class="proj-btn-label">影像简历</span></a></div>
+          <div class="credit-item">
+            <span class="credit-name">Visual Storytelling</span>
+            <span class="credit-role role-focus">FOCUS</span>
           </div>
         </div>
       </div>
-    </section>
 
-    <section id="skills">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">SCENE 05</span>
-          <h2 class="sec-title">技能清单</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">END CREDITS</span>
+      <div class="credit-col">
+        <div class="credit-header">
+          <span class="credit-header-num">03</span>
+          <span class="credit-header-title">DESIGN</span>
         </div>
-        <div class="credit-grid">
-          <div class="credit-col">
-            <div class="credit-header"><span class="credit-header-num">01</span><span class="credit-header-title">游戏策划</span></div>
-            <div class="credit-items">
-              <div class="credit-item"><span class="credit-name">关卡设计</span><span class="credit-role role-lead">LEAD</span></div>
-              <div class="credit-item"><span class="credit-name">玩法机制设计</span><span class="credit-role role-lead">LEAD</span></div>
-              <div class="credit-item"><span class="credit-name">系统与叙事设计</span><span class="credit-role role-focus">FOCUS</span></div>
-              <div class="credit-item"><span class="credit-name">玩家体验分析</span><span class="credit-role role-focus">FOCUS</span></div>
-            </div>
+        <div class="credit-items">
+          <div class="credit-item">
+            <span class="credit-name">Visual Design</span>
+            <span class="credit-role role-lead">LEAD</span>
           </div>
-          <div class="credit-col">
-            <div class="credit-header"><span class="credit-header-num">02</span><span class="credit-header-title">影像制作</span></div>
-            <div class="credit-items">
-              <div class="credit-item"><span class="credit-name">导演与现场协作</span><span class="credit-role role-lead">LEAD</span></div>
-              <div class="credit-item"><span class="credit-name">摄影与分镜设计</span><span class="credit-role role-lead">LEAD</span></div>
-              <div class="credit-item"><span class="credit-name">美术设计 / 道具选择</span><span class="credit-role role-focus">FOCUS</span></div>
-              <div class="credit-item"><span class="credit-name">剪辑与后期</span><span class="credit-role role-lead">LEAD</span></div>
-            </div>
+          <div class="credit-item">
+            <span class="credit-name">Interactive Media</span>
+            <span class="credit-role role-sup">SUPPORTING</span>
           </div>
-          <div class="credit-col">
-            <div class="credit-header"><span class="credit-header-num">03</span><span class="credit-header-title">工具与语言</span></div>
-            <div class="credit-items">
-              <div class="credit-item"><span class="credit-name">Premiere Pro / Photoshop</span><span class="credit-role role-lead">TOOL</span></div>
-              <div class="credit-item"><span class="credit-name">Unity / Roblox / 原型工具</span><span class="credit-role role-sup">TOOL</span></div>
-              <div class="credit-item"><span class="credit-name">中文 / 韩语 / 英语</span><span class="credit-role role-focus">LANG</span></div>
-              <div class="credit-item"><span class="credit-name">逻辑执行与问题拆解</span><span class="credit-role role-lead">CORE</span></div>
-            </div>
+          <div class="credit-item">
+            <span class="credit-name">Presentation Design</span>
+            <span class="credit-role role-lead">LEAD</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-name">Creative Research</span>
+            <span class="credit-role role-focus">FOCUS</span>
           </div>
         </div>
       </div>
-    </section>
 
-    <section id="contact">
-      <div class="sec">
-        <div class="sec-head">
-          <span class="scene-num">SCENE 06</span>
-          <h2 class="sec-title">联系我</h2>
-          <div class="sec-rule"></div>
-          <span class="scene-int">AVAILABLE</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="sec">
+    <div class="sec-head">
+      <span class="scene-num">SCENE 04</span>
+      <h2 class="sec-title">SAY HELLO</h2>
+      <div class="sec-rule"></div>
+      <span class="scene-int">EXT. · GOLDEN HOUR</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-left">
+        <div class="contact-big">LET'S MAKE<br>SOMETHING<br><em>worth watching.</em></div>
+        <p class="contact-sub">Open to collaborations in film, data visualization, and creative technology. Always happy to connect over a project.</p>
+        <div class="contact-location">
+          <div class="loc-dot"></div>
+          Seoul, South Korea · Available for collaboration
         </div>
-        <div class="contact-grid">
+      </div>
+      <div class="contact-links">
+        <a class="c-item" href="mailto:wxr2320704536@gmail.com">
+          <div class="c-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="1.5"/><path d="M2 7l10 6.5L22 7"/></svg>
+          </div>
           <div>
-            <div class="contact-big">期待参与<br><em>有表达欲的项目</em></div>
-            <p class="contact-sub">如果你对我的影像、游戏或视觉内容作品感兴趣，欢迎通过邮箱或电话联系我。也很期待和不同创作者、团队一起推进新的项目。</p>
-            <div class="contact-location"><div class="loc-dot"></div>韩国首尔 / 北京 · 可沟通项目合作</div>
+            <span class="c-key">Email</span>
+            <span class="c-val">wxr2320704536@gmail.com</span>
           </div>
-          <div class="contact-links">
-            <a class="c-item" href="mailto:2320704536@qq.com">
-              <div class="c-icon-box">✉</div>
-              <div><span class="c-key">邮箱</span><span class="c-val">2320704536@qq.com</span></div>
-              <span class="c-arrow">→</span>
-            </a>
-            <a class="c-item" href="tel:13911900412">
-              <div class="c-icon-box">☎</div>
-              <div><span class="c-key">电话</span><span class="c-val">13911900412</span></div>
-              <span class="c-arrow">→</span>
-            </a>
+          <span class="c-arrow">→</span>
+        </a>
+        <a class="c-item" href="https://github.com/wangxinru04" target="_blank" rel="noopener">
+          <div class="c-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
           </div>
-        </div>
+          <div>
+            <span class="c-key">GitHub</span>
+            <span class="c-val">wangxinru04</span>
+          </div>
+          <span class="c-arrow">→</span>
+        </a>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <span class="footer-l">© 2026 王欣如 · 影像制作 / 游戏策划 / 视觉叙事</span>
-    <span class="footer-r">WANG XINRU</span>
-  </footer>
+</main>
 
-  <script>
-    const cur = document.getElementById("cur");
-    const curDot = document.getElementById("cur-dot");
-    document.addEventListener("mousemove", e => {
-      cur.style.left = e.clientX + "px";
-      cur.style.top = e.clientY + "px";
-      curDot.style.left = e.clientX + "px";
-      curDot.style.top = e.clientY + "px";
-    });
+<!-- FOOTER -->
+<footer>
+  <span class="footer-l">© 2026 Wang Xinru · Built in Seoul · Film, data &amp; creative technology</span>
+  <span class="footer-r">WANG XINRU</span>
+</footer>
 
-    let frames = 0;
-    const tcEl = document.getElementById("tc-time");
-    setInterval(() => {
-      frames++;
-      const f = frames % 24;
-      const s = Math.floor(frames / 24) % 60;
-      const m = Math.floor(frames / (24 * 60)) % 60;
-      const h = Math.floor(frames / (24 * 60 * 60)) % 24;
-      const pad = n => String(n).padStart(2, "0");
-      tcEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}:${pad(f)}`;
-    }, 1000 / 24);
+<script>
+  // Cursor
+  const cur = document.getElementById('cur');
+  const curDot = document.getElementById('cur-dot');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+    curDot.style.left = e.clientX + 'px';
+    curDot.style.top  = e.clientY + 'px';
+  });
 
-    const fill = document.getElementById("progress-fill");
-    window.addEventListener("scroll", () => {
-      const max = document.body.scrollHeight - window.innerHeight;
-      fill.style.height = `${max > 0 ? (window.scrollY / max) * 100 : 0}%`;
-    });
-  </script>
+  // Timecode counter
+  let frames = 0;
+  const tcEl = document.getElementById('tc-time');
+  setInterval(() => {
+    frames++;
+    const f  = frames % 24;
+    const s  = Math.floor(frames / 24) % 60;
+    const m  = Math.floor(frames / (24*60)) % 60;
+    const h  = Math.floor(frames / (24*60*60)) % 24;
+    const pad = n => String(n).padStart(2,'0');
+    tcEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}:${pad(f)}`;
+  }, 1000/24);
+
+  // Scroll progress
+  const fill = document.getElementById('progress-fill');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    fill.style.height = pct + '%';
+  });
+</script>
 </body>
 </html>
